@@ -2,11 +2,13 @@ package app.android.carlosmartin.offimate.models;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
+
 /**
- * Created by carlos.martin on 17/11/2017.
+ * Created by carlos.martin on 30/11/2017.
  */
 
-public class Office implements Comparable<Office> {
+public class Office implements Comparable<Office>, Serializable {
     public final String id;
     public final String name;
 
@@ -18,5 +20,10 @@ public class Office implements Comparable<Office> {
     @Override
     public int compareTo(@NonNull Office office) {
         return this.id.compareTo(office.id);
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }
