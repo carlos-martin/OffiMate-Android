@@ -1,4 +1,4 @@
-package app.android.carlosmartin.offimate.Models;
+package app.android.carlosmartin.offimate.models;
 
 import android.support.annotation.NonNull;
 
