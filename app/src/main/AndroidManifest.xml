@@ -20,7 +20,8 @@
         <activity android:name=".activities.onboard.SignUpEmailActivity" />
         <activity android:name=".activities.onboard.SignUpOfficesActivity" />
         <activity android:name=".activities.onboard.SignUpPasswordActivity" />
-        <activity android:name=".activities.onboard.LoginActivity"></activity>
+        <activity android:name=".activities.onboard.LoginActivity" />
+        <activity android:name=".activities.LoadingActivity"></activity>
     </application>
 
 </manifest>

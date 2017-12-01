@@ -1,5 +1,6 @@
 package app.android.carlosmartin.offimate.activities.onboard;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import app.android.carlosmartin.offimate.R;
+import app.android.carlosmartin.offimate.activities.LoadingActivity;
 import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Office;
 
@@ -100,6 +102,10 @@ public class SignUpPasswordActivity extends AppCompatActivity {
 
             Toast.makeText(SignUpPasswordActivity.this,
                     message, Toast.LENGTH_LONG).show();
+
+            Intent intentToOffice = new Intent(SignUpPasswordActivity.this,
+                    LoadingActivity.class);
+            startActivity(intentToOffice);
 
         } else {
             this.userPassword = null;
