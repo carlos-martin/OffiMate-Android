@@ -5,6 +5,7 @@
         android:id="@+id/next_bar_button_item"
         android:title="Done"
         android:icon="@drawable/ic_action_sent"
+        android:iconTint="@color/colorAccent"
         app:showAsAction="ifRoom"
         />
 </menu>
