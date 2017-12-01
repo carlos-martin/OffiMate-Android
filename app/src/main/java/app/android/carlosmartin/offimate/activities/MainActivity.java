@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initUI() {
-        this.setTitle("On board");
         this.buttonSignUp = findViewById(R.id.buttonSignup);
         this.buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
