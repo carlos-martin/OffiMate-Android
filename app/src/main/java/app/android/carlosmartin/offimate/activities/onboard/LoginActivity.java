@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import app.android.carlosmartin.offimate.R;
+import app.android.carlosmartin.offimate.helpers.Tools;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -52,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
                     switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
-                            saveEmailFieldAction();
+                            userEmail = editTextEmail.getText().toString();
                             return true;
                         default:
                             break;
@@ -71,7 +72,8 @@ public class LoginActivity extends AppCompatActivity {
                     switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
-                            savePasswordFieldAction();
+                            userPassword = editTextPassword.getText().toString();
+                            loginAction();
                             return true;
                         default:
                             break;
@@ -103,39 +105,54 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loginAction() {
         int error_counter = 0;
-        this.saveEmailFieldAction();
-        this.savePasswordFieldAction();
 
-        if (this.userEmail == null) {
+        this.userEmail = this.editTextEmail.getText().toString();
+        if (this.userEmail == null || this.userEmail.isEmpty()) {
             String error_message = "Email field cannot be empty";
             Toast.makeText(LoginActivity.this, error_message, Toast.LENGTH_SHORT).show();
             error_counter++;
+        } else {
+            if (Tools.isValidEmail(this.userEmail)) {
+                Log.d("LOGIN","User email: " + this.userEmail);
+            } else {
+                error_counter++;
+                this.userEmail = null;
+
+                String error_message = "Your email must have one of this two domains: sigma.se or " +
+                        "sigmatechnology.se";
+
+                Toast.makeText(LoginActivity.this,
+                        error_message , Toast.LENGTH_LONG).show();
+            }
         }
 
-        if (this.userPassword == null) {
+        this.userPassword = this.editTextPassword.getText().toString();
+        if (this.userPassword == null || this.userPassword.isEmpty()) {
             String error_message = "Password field cannot be empty";
             Toast.makeText(LoginActivity.this, error_message, Toast.LENGTH_SHORT).show();
             error_counter++;
+        } else {
+            if (Tools.isValidPassword(this.userPassword)) {
+                Log.d("LOGIN","User password: " + this.userPassword);
+            } else {
+                error_counter++;
+                this.userPassword = null;
+
+                String error_message = "The password must be a minimum of 8 characters and must " +
+                        "contain at least one uppercase, one lowercase, one number and one " +
+                        "special character.";
+
+                Toast.makeText(LoginActivity.this,
+                        error_message, Toast.LENGTH_LONG).show();
+            }
         }
 
         if (error_counter == 0) {
             //TODO: Try to log in.
-        }
-    }
+            String message = "Front-end validation passed!";
 
-    private void saveEmailFieldAction() {
-        if (this.editTextEmail.getText() != null &&
-                !this.editTextEmail.getText().toString().isEmpty()) {
-            this.userEmail = this.editTextEmail.getText().toString();
-            Log.d("LOGIN","User email: " + this.userEmail);
-        }
-    }
-
-    private void savePasswordFieldAction() {
-        if (this.editTextPassword.getText() != null &&
-                !this.editTextPassword.getText().toString().isEmpty()) {
-            this.userPassword = this.editTextPassword.getText().toString();
-            Log.d("LOGIN","User password: " + this.userPassword);
+            Toast.makeText(LoginActivity.this,
+                    message, Toast.LENGTH_LONG).show();
         }
     }
 }
