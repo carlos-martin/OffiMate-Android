@@ -1,4 +1,4 @@
-package app.android.carlosmartin.offimate.activities;
+package app.android.carlosmartin.offimate.activities.onboard;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,10 +7,8 @@ import android.view.View;
 import android.widget.Button;
 
 import app.android.carlosmartin.offimate.R;
-import app.android.carlosmartin.offimate.activities.onboard.LoginActivity;
-import app.android.carlosmartin.offimate.activities.onboard.SignUpNameActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class OnBoardActivity extends AppCompatActivity {
 
     private Button buttonSignUp;
     private Button buttonLogin;
@@ -18,12 +16,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_on_board);
 
         initUI();
     }
 
     private void initUI() {
+        setTitle("On Board");
+
         this.buttonSignUp = findViewById(R.id.buttonSignup);
         this.buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,12 +42,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buttonSignupClicked() {
-        Intent intentToSignup = new Intent(MainActivity.this, SignUpNameActivity.class);
+        Intent intentToSignup = new Intent(OnBoardActivity.this, SignUpNameActivity.class);
         startActivity(intentToSignup);
     }
 
     private void buttonLoginClicked() {
-        Intent intentToLogin = new Intent(MainActivity.this, LoginActivity.class);
+        Intent intentToLogin = new Intent(OnBoardActivity.this, LoginActivity.class);
         startActivity(intentToLogin);
     }
 }

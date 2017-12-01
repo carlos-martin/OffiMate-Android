@@ -17,6 +17,7 @@ import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.LoadingActivity;
 import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Office;
+import app.android.carlosmartin.offimate.user.CurrentUser;
 
 public class SignUpPasswordActivity extends AppCompatActivity {
 
@@ -104,6 +105,11 @@ public class SignUpPasswordActivity extends AppCompatActivity {
                     message, Toast.LENGTH_LONG).show();
 
             //TODO: Create user account
+
+            CurrentUser.name =      this.userName;
+            CurrentUser.email =     this.userEmail;
+            CurrentUser.password =  this.userPassword;
+            CurrentUser.office =    this.userOffice;
 
             Intent intentToLoading = new Intent(SignUpPasswordActivity.this,
                     LoadingActivity.class);

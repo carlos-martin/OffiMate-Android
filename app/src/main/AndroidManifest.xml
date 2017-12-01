@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.LoadingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,7 +21,7 @@
         <activity android:name=".activities.onboard.SignUpOfficesActivity" />
         <activity android:name=".activities.onboard.SignUpPasswordActivity" />
         <activity android:name=".activities.onboard.LoginActivity" />
-        <activity android:name=".activities.LoadingActivity"></activity>
+        <activity android:name=".activities.onboard.OnBoardActivity"></activity>
     </application>
 
 </manifest>
