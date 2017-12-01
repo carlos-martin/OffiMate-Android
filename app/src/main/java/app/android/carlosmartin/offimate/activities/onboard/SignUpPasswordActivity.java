@@ -103,9 +103,17 @@ public class SignUpPasswordActivity extends AppCompatActivity {
             Toast.makeText(SignUpPasswordActivity.this,
                     message, Toast.LENGTH_LONG).show();
 
-            Intent intentToOffice = new Intent(SignUpPasswordActivity.this,
+            //TODO: Create user account
+
+            Intent intentToLoading = new Intent(SignUpPasswordActivity.this,
                     LoadingActivity.class);
-            startActivity(intentToOffice);
+
+            //To clean the entire history stack
+            intentToLoading.setFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK |
+                            Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            startActivity(intentToLoading);
 
         } else {
             this.userPassword = null;

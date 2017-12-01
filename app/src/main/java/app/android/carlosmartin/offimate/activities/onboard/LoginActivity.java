@@ -1,6 +1,7 @@
 package app.android.carlosmartin.offimate.activities.onboard;
 
 import android.content.Intent;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -156,9 +157,17 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(LoginActivity.this,
                     message, Toast.LENGTH_LONG).show();
 
-            Intent intentToOffice = new Intent(LoginActivity.this,
+            //TODO: Login user
+
+            Intent intentToLoading = new Intent(LoginActivity.this,
                     LoadingActivity.class);
-            startActivity(intentToOffice);
+
+            //To clean the entire history stack
+            intentToLoading.setFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            startActivity(intentToLoading);
         }
     }
 }

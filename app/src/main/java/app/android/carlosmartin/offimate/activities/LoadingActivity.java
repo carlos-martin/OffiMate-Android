@@ -17,9 +17,4 @@ public class LoadingActivity extends AppCompatActivity {
         //findViewById(R.id.loadingPanel).setVisibility(View.GONE);
     }
 
-    @Override
-    public void onBackPressed() {
-        //super.onBackPressed();
-        Toast.makeText(LoadingActivity.this, "Blocked!", Toast.LENGTH_SHORT).show();
-    }
 }
