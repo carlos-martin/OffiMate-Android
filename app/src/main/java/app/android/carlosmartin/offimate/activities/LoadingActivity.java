@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.onboard.OnBoardActivity;
-import app.android.carlosmartin.offimate.user.CurrentUser;
+import app.android.carlosmartin.offimate.application.OffiMate;
 
 public class LoadingActivity extends AppCompatActivity {
 
@@ -22,8 +22,8 @@ public class LoadingActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //TODO: Move it to on appears
-                if (!CurrentUser.isInit()) {
+                // TODO: Move it to "will appears"
+                if (OffiMate.currentUser == null) {
                     stopLoading();
 
                     Intent intentToOnBoard = new Intent(LoadingActivity.this,
@@ -34,10 +34,16 @@ public class LoadingActivity extends AppCompatActivity {
                                     Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                     startActivity(intentToOnBoard);
+                } else {
+                    Toast.makeText(LoadingActivity.this,
+                            "Current User was created successfully!",
+                            Toast.LENGTH_LONG).show();
                 }
+
             }
         }, 2000);
-        /* TODO: Move it to on appears
+
+        /*
         if (!CurrentUser.isInit()) {
             this.stopLoading();
 

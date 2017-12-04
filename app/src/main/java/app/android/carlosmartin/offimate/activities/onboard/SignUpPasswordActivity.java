@@ -15,11 +15,16 @@ import android.widget.Toast;
 
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.LoadingActivity;
+import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Office;
 import app.android.carlosmartin.offimate.user.CurrentUser;
+import io.realm.Realm;
 
 public class SignUpPasswordActivity extends AppCompatActivity {
+
+    //RealmDataBase
+    private Realm realm;
 
     //DataSource
     private String userName;
@@ -36,6 +41,8 @@ public class SignUpPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_password);
         this.initUI();
+
+        this.realm = Realm.getDefaultInstance();
     }
 
     private void initUI() {
@@ -98,18 +105,17 @@ public class SignUpPasswordActivity extends AppCompatActivity {
     private void createUserAccount() {
         this.userPassword = this.editTextPassword.getText().toString();
         if (Tools.isValidPassword(this.userPassword)) {
+            /*
+             * TODO: Create user account
+             */
 
-            String message = "GOOD PASSWORD!";
-
-            Toast.makeText(SignUpPasswordActivity.this,
-                    message, Toast.LENGTH_LONG).show();
-
-            //TODO: Create user account
-
-            CurrentUser.name =      this.userName;
-            CurrentUser.email =     this.userEmail;
-            CurrentUser.password =  this.userPassword;
-            CurrentUser.office =    this.userOffice;
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    OffiMate.currentUser = new CurrentUser(userName, userEmail, userPassword, userOffice);
+                    realm.copyToRealm(OffiMate.currentUser);
+                }
+            });
 
             Intent intentToLoading = new Intent(SignUpPasswordActivity.this,
                     LoadingActivity.class);

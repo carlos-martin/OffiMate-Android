@@ -1,20 +1,106 @@
 package app.android.carlosmartin.offimate.user;
 
-import android.support.annotation.NonNull;
-
+import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.models.Office;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 /**
  * Created by carlos.martin on 01/12/2017.
  */
 
-public class CurrentUser {
-    public static String name;
-    public static String email;
-    public static String password;
-    public static Office office;
+public class CurrentUser extends RealmObject {
+    @PrimaryKey
+    private int id;
 
-    public static boolean isInit() {
-        return (name != null && email != null && password != null && office != null);
+    @Required
+    private String name;
+
+    @Required
+    private String email;
+
+    @Required
+    private String password;
+
+    @Required
+    private String officeId;
+
+    @Required
+    private String officeName;
+
+    /*
+     * TODO: Add the Channels list associated to the current user office.
+     *
+    private RealmList<Channel> channels;
+     */
+
+    public CurrentUser() {}
+
+    public CurrentUser(String name, String email, String password, Office office) {
+        this.id = OffiMate.CurrentUserID.incrementAndGet();
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.officeId = office.id;
+        this.officeName = office.name;
+        //this.channels = new RealmList<Channel>();
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Office getOffice() {
+        return new Office(this.officeId, this.officeName);
+    }
+
+    public void setOffice(Office office) {
+        this.officeId = office.id;
+        this.officeName = office.name;
+    }
+
+    /*
+     * TODO: All functions need to implement the current user channels associated to the offices
+     *
+    public void initChannel (List<Channel> channels) {
+        //TODO: Init this.channels
+    }
+
+    public void cleanChannels () {
+        //TODO: Remove all channels list
+    }
+
+    public void addChannel (Channel channel, NewDate lastAccess) {
+        //TODO: Add a new channel to the channels list
+    }
+
+    public void updateChannel (Channel channel, NewDate lastAccess) {
+        //TODO: Update the a specific channel already at the channels list
+    }
+
+    public void insertChannel (int at, Channel channel, NewDate lastAccess) {
+        //TODO: Add a new channel on a specific position at the channels list
+    }
+
+    public void removeChannel (int index) {
+        //TODO: Remove the channel at index position at the channels list
+    }
+     */
 }
