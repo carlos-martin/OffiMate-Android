@@ -138,12 +138,16 @@ public class SignUpPasswordActivity extends AppCompatActivity {
         }
     }
 
+    //MARK: - Navigation
+
     private void moveToLoadingActivity () {
         Intent intent = new Intent(SignUpPasswordActivity.this,
                 LoadingActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
+
+    //MARK: - Loading View
 
     private void initLoadingView() {
         findViewById(R.id.signUpLoadingPanel).setVisibility(View.GONE);
@@ -159,7 +163,7 @@ public class SignUpPasswordActivity extends AppCompatActivity {
         this.barMenuButton.setVisible(true);
     }
 
-    // Menu
+    //MARK: - Menu Button
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();

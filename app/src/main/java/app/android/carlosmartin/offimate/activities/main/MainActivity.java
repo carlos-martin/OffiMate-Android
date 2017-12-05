@@ -39,7 +39,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d("OffiMate", "initUI: " + this.userPasswordTextView.getText());
 
         this.userOfficeTextView = findViewById(R.id.textViewMainUserOffice);
-        this.userOfficeTextView.setText(OffiMate.currentUser.getOffice().name);
+        String officeId =  OffiMate.currentUser.getOffice().id;
+        String officeName = OffiMate.currentUser.getOffice().name;
+        String label = officeId + " " + officeName;
+        this.userOfficeTextView.setText(label);
         Log.d("OffiMate", "initUI: " + this.userOfficeTextView.getText());
     }
 }
