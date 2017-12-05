@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,12 +76,11 @@ public class SignUpOfficesActivity extends AppCompatActivity implements ListView
     }
 
     private void goToSignUpPasswordActivity() {
-        Intent intentToPassword = new Intent(SignUpOfficesActivity.this,
+        Intent intent = new Intent(SignUpOfficesActivity.this,
                 SignUpPasswordActivity.class);
-        intentToPassword.putExtra("user_name",  this.userName);
-        intentToPassword.putExtra("user_email", this.userEmail);
-        intentToPassword.putExtra("user_office", this.userOffice);
-        startActivity(intentToPassword);
-
+        intent.putExtra("user_name",  this.userName);
+        intent.putExtra("user_email", this.userEmail);
+        intent.putExtra("user_office", this.userOffice);
+        startActivity(intent);
     }
 }

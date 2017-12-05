@@ -4,6 +4,9 @@ import android.app.Application;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import app.android.carlosmartin.offimate.user.CurrentUser;
@@ -28,9 +31,13 @@ public class OffiMate extends Application {
 
     /* Static variable where we will host the current user data */
     public static CurrentUser currentUser;
+    public static FirebaseUser firebaseUser;
+    public static FirebaseAuth mAuth;
 
     /* Connexion with our local data base */
-    private Realm realm;
+    public static Realm realm;
+
+    private RealmResults<CurrentUser> results;
 
 
     @Override
@@ -38,6 +45,7 @@ public class OffiMate extends Application {
 
         Toast.makeText(this, "WELCOME TO OFFIMATE!", Toast.LENGTH_LONG).show();
 
+        this.firebaseAuth();
         this.realmConfigurationSepUp();
         this.realmFetchingData();
 
@@ -45,6 +53,11 @@ public class OffiMate extends Application {
 
         super.onCreate();
 
+    }
+
+    private void firebaseAuth() {
+        this.mAuth = FirebaseAuth.getInstance();
+        this.firebaseUser =  this.mAuth.getCurrentUser();
     }
 
     private void realmConfigurationSepUp() {
@@ -61,10 +74,19 @@ public class OffiMate extends Application {
         this.CurrentUserID = getIdByTable(realm, CurrentUser.class);
 
         //Fetching currentUser
-        this.currentUser = this.realm.where(CurrentUser.class).findAll().first();
-        Log.d("OffiMate", this.currentUser.toString());
+        this.results = this.realm.where(CurrentUser.class).findAll();
+        if (this.results.size() > 0) {
+            this.currentUser = this.results.first();
+        } else {
+            this.currentUser = null;
+        }
 
-        this.realm.close();
+        /*
+         * TODO: Take care of this
+         *
+         * this.realm.close();
+         *
+         */
     }
 
     private <T extends RealmObject> AtomicInteger getIdByTable(Realm realm, Class<T> anyClass) {

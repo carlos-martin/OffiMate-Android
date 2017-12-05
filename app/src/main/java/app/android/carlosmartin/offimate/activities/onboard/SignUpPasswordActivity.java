@@ -1,6 +1,7 @@
 package app.android.carlosmartin.offimate.activities.onboard;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.LoadingActivity;
 import app.android.carlosmartin.offimate.application.OffiMate;
@@ -23,9 +28,6 @@ import io.realm.Realm;
 
 public class SignUpPasswordActivity extends AppCompatActivity {
 
-    //RealmDataBase
-    private Realm realm;
-
     //DataSource
     private String userName;
     private String userEmail;
@@ -35,18 +37,19 @@ public class SignUpPasswordActivity extends AppCompatActivity {
     //UI
     private TextView textViewPassword;
     private EditText editTextPassword;
+    private MenuItem barMenuButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_password);
         this.initUI();
-
-        this.realm = Realm.getDefaultInstance();
     }
 
     private void initUI() {
         setTitle("Password");
+
+        this.initLoadingView();
 
         this.textViewPassword = findViewById(R.id.textViewPassword);
         this.textViewPassword.setText("ADD A PASSWORD FOR YOUR ACCOUNT");
@@ -83,25 +86,6 @@ public class SignUpPasswordActivity extends AppCompatActivity {
         Log.d("{{userOffice}}:", this.userOffice.toString());
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.action_bar_menu_done, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.next_bar_button_item:
-                this.createUserAccount();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
-
     private void createUserAccount() {
         this.userPassword = this.editTextPassword.getText().toString();
         if (Tools.isValidPassword(this.userPassword)) {
@@ -109,24 +93,39 @@ public class SignUpPasswordActivity extends AppCompatActivity {
              * TODO: Create user account
              */
 
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    OffiMate.currentUser = new CurrentUser(userName, userEmail, userPassword, userOffice);
-                    realm.copyToRealm(OffiMate.currentUser);
-                }
-            });
+            startLoadingView();
 
-            Intent intentToLoading = new Intent(SignUpPasswordActivity.this,
-                    LoadingActivity.class);
+            OffiMate.mAuth.createUserWithEmailAndPassword(this.userEmail, this.userPassword)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            stopLoadingView();
+                            if (task.isSuccessful()) {
 
-            //To clean the entire history stack
-            intentToLoading.setFlags(
-                    Intent.FLAG_ACTIVITY_NEW_TASK |
-                            Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                //TODO: Create Coworker entry
 
-            startActivity(intentToLoading);
+                                OffiMate.firebaseUser = OffiMate.mAuth.getCurrentUser();
+                                OffiMate.realm.executeTransaction(new Realm.Transaction() {
+                                    @Override
+                                    public void execute(Realm realm) {
+                                        OffiMate.currentUser = new CurrentUser(
+                                                userName, userEmail, userPassword, userOffice);
+                                        realm.copyToRealm(OffiMate.currentUser);
+                                    }
+                                });
 
+                                moveToLoadingActivity();
+
+                            } else {
+                                /*
+                                 * task.getException());
+                                 */
+                                Toast.makeText(SignUpPasswordActivity.this,
+                                        "Authentication failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
         } else {
             this.userPassword = null;
 
@@ -137,6 +136,46 @@ public class SignUpPasswordActivity extends AppCompatActivity {
             Toast.makeText(SignUpPasswordActivity.this,
                     error_message, Toast.LENGTH_LONG).show();
         }
+    }
 
+    private void moveToLoadingActivity () {
+        Intent intent = new Intent(SignUpPasswordActivity.this,
+                LoadingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    private void initLoadingView() {
+        findViewById(R.id.signUpLoadingPanel).setVisibility(View.GONE);
+    }
+
+    private void startLoadingView () {
+        findViewById(R.id.signUpLoadingPanel).setVisibility(View.VISIBLE);
+        this.barMenuButton.setVisible(false);
+    }
+
+    private void stopLoadingView() {
+        findViewById(R.id.signUpLoadingPanel).setVisibility(View.GONE);
+        this.barMenuButton.setVisible(true);
+    }
+
+    // Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.action_bar_menu_done, menu);
+        this.barMenuButton = menu.findItem(R.id.done_bar_button_item);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.done_bar_button_item:
+                this.createUserAccount();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

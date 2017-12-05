@@ -1,5 +1,7 @@
 package app.android.carlosmartin.offimate.user;
 
+import android.util.Log;
+
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.models.Office;
 import io.realm.RealmObject;
@@ -74,6 +76,13 @@ public class CurrentUser extends RealmObject {
     public void setOffice(Office office) {
         this.officeId = office.id;
         this.officeName = office.name;
+    }
+
+    public void printLog (String tag) {
+        Log.d("OffiMate", tag + ": CurrentUser name:"       + this.getName());
+        Log.d("OffiMate", tag + ": CurrentUser email:"      + this.getEmail());
+        Log.d("OffiMate", tag + ": CurrentUser password:"   + this.getPassword());
+        Log.d("OffiMate", tag + ": CurrentUser office:"     + this.getOffice().name);
     }
 
     /*

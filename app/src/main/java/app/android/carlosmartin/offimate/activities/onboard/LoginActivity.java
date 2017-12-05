@@ -1,7 +1,7 @@
 package app.android.carlosmartin.offimate.activities.onboard;
 
 import android.content.Intent;
-import android.support.v4.content.IntentCompat;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,32 +14,51 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.LoadingActivity;
+import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
+import app.android.carlosmartin.offimate.models.Office;
+import app.android.carlosmartin.offimate.user.CurrentUser;
+import io.realm.Realm;
 
 public class LoginActivity extends AppCompatActivity {
 
+    //Firebase
+    private FirebaseAuth mAuth;
+
     //DataSource
+    private String userName;
     private String userEmail;
     private String userPassword;
+    private Office userOffice;
 
     //UI
     private TextView textViewEmail;
     private TextView textViewPassword;
     private EditText editTextEmail;
     private EditText editTextPassword;
+    private MenuItem barMenuButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        this.mAuth = FirebaseAuth.getInstance();
+
         initUI();
     }
 
     private void initUI() {
         setTitle("Login");
+
+        this.initLoadingView();
 
         this.textViewEmail = findViewById(R.id.textViewUserEmail);
         this.textViewEmail.setText("E-MAIL");
@@ -85,25 +104,10 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.action_bar_menu_done, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.next_bar_button_item:
-                this.loginAction();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
+        //TODO: Remove it
+        this.userName = "Anonymous User";
+        this.userOffice = new Office("-1", "Anonymous Office");
     }
 
     private void loginAction() {
@@ -151,23 +155,75 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (error_counter == 0) {
-            //TODO: Try to log in.
-            String message = "Front-end validation passed!";
+            startLoadingView();
+            OffiMate.mAuth.signInWithEmailAndPassword(this.userEmail, this.userPassword)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            stopLoadingView();
+                            if (task.isSuccessful()) {
+                                OffiMate.firebaseUser = OffiMate.mAuth.getCurrentUser();
 
-            Toast.makeText(LoginActivity.this,
-                    message, Toast.LENGTH_LONG).show();
+                                //TODO: Fetch the userOffice and userName
 
-            //TODO: Login user
+                                OffiMate.realm.executeTransaction(new Realm.Transaction() {
+                                    @Override
+                                    public void execute(Realm realm) {
+                                        OffiMate.currentUser = new CurrentUser(
+                                                userName, userEmail, userPassword, userOffice);
+                                        realm.copyToRealm(OffiMate.currentUser);
+                                    }
+                                });
 
-            Intent intentToLoading = new Intent(LoginActivity.this,
-                    LoadingActivity.class);
+                                moveToLoadingActivity();
 
-            //To clean the entire history stack
-            intentToLoading.setFlags(
-                    Intent.FLAG_ACTIVITY_NEW_TASK |
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-            startActivity(intentToLoading);
+                            } else {
+                                Toast.makeText(LoginActivity.this,
+                                        "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
         }
+    }
+
+    private void moveToLoadingActivity () {
+        Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    private void initLoadingView (){
+        findViewById(R.id.loginLoadingPanel).setVisibility(View.GONE);
+    }
+
+    private void startLoadingView () {
+        findViewById(R.id.loginLoadingPanel).setVisibility(View.VISIBLE);
+        this.barMenuButton.setVisible(false);
+    }
+
+    private void stopLoadingView() {
+        findViewById(R.id.loginLoadingPanel).setVisibility(View.GONE);
+        this.barMenuButton.setVisible(true);
+    }
+
+    // Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.action_bar_menu_done, menu);
+        this.barMenuButton = menu.findItem(R.id.done_bar_button_item);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.done_bar_button_item:
+                this.loginAction();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 }
