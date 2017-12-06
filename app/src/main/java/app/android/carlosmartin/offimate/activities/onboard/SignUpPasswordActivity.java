@@ -95,38 +95,32 @@ public class SignUpPasswordActivity extends AppCompatActivity {
 
             startLoadingView();
 
-            OffiMate.mAuth.createUserWithEmailAndPassword(this.userEmail, this.userPassword)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            stopLoadingView();
-                            if (task.isSuccessful()) {
+            OffiMate.mAuth.createUserWithEmailAndPassword(this.userEmail, this.userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    stopLoadingView();
+                    if (task.isSuccessful()) {
 
-                                //TODO: Create Coworker entry
+                        //TODO: Create Coworker entry
 
-                                OffiMate.firebaseUser = OffiMate.mAuth.getCurrentUser();
-                                OffiMate.realm.executeTransaction(new Realm.Transaction() {
-                                    @Override
-                                    public void execute(Realm realm) {
-                                        OffiMate.currentUser = new CurrentUser(
-                                                OffiMate.firebaseUser.getUid(),
-                                                userName, userEmail, userPassword, userOffice);
-                                        realm.copyToRealm(OffiMate.currentUser);
-                                    }
-                                });
-
-                                moveToLoadingActivity();
-
-                            } else {
-                                /*
-                                 * task.getException());
-                                 */
-                                Toast.makeText(SignUpPasswordActivity.this,
-                                        "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
+                        OffiMate.firebaseUser = OffiMate.mAuth.getCurrentUser();
+                        OffiMate.realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                OffiMate.currentUser = new CurrentUser(
+                                        OffiMate.firebaseUser.getUid(),
+                                        userName, userEmail, userPassword, userOffice);
+                                realm.copyToRealm(OffiMate.currentUser);
                             }
-                        }
-                    });
+                        });
+
+                        moveToLoadingActivity();
+
+                    } else {
+                        Toast.makeText(SignUpPasswordActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         } else {
             this.userPassword = null;
 
