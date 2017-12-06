@@ -25,7 +25,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
-import java.util.Set;
 
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.LoadingActivity;
@@ -122,10 +121,6 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        //TODO: Remove it
-        this.userName = "Anonymous User";
-        this.userOffice = new Office("-1", "Anonymous Office");
     }
 
     private void loginAction() {
