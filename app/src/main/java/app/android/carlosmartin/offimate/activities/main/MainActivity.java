@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         this.userNameTextView = findViewById(R.id.textViewMainUserName);
         String userName = OffiMate.currentUser.getName();
         String userUID = OffiMate.currentUser.getUid();
-        this.userNameTextView.setText(userName + " - " + userUID);
+        this.userNameTextView.setText(userName + " - {{" + userUID + "}}");
 
         this.userEmailTextView = findViewById(R.id.textViewMainUserEmail);
         this.userEmailTextView.setText(OffiMate.currentUser.getEmail());
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         this.userOfficeTextView = findViewById(R.id.textViewMainUserOffice);
         String officeId =  OffiMate.currentUser.getOffice().id;
         String officeName = OffiMate.currentUser.getOffice().name;
-        String label = officeId + " " + officeName;
+        String label = officeName + " - {{" + officeId + "}}";
         this.userOfficeTextView.setText(label);
     }
 }

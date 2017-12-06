@@ -18,6 +18,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Map;
+import java.util.Set;
 
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.LoadingActivity;
@@ -31,12 +39,16 @@ public class LoginActivity extends AppCompatActivity {
 
     //Firebase
     private FirebaseAuth mAuth;
+    private FirebaseDatabase database;
+    private DatabaseReference coworkerRef;
+    private DatabaseReference officeRef;
 
     //DataSource
     private String userName;
     private String userEmail;
     private String userPassword;
     private Office userOffice;
+    private String userId;
 
     //UI
     private TextView textViewEmail;
@@ -50,9 +62,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        this.mAuth = FirebaseAuth.getInstance();
+        this.initFirebase();
+        this.initUI();
+    }
 
-        initUI();
+    private void initFirebase() {
+        this.mAuth =        FirebaseAuth.getInstance();
+        this.database =     FirebaseDatabase.getInstance();
+        this.coworkerRef =  this.database.getReference("coworkers");
+        this.officeRef =    this.database.getReference("office");
     }
 
     private void initUI() {
@@ -161,37 +179,72 @@ public class LoginActivity extends AppCompatActivity {
 
     private void firebaseLogIn() {
         startLoadingView();
-        OffiMate.mAuth.signInWithEmailAndPassword(this.userEmail, this.userPassword)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        stopLoadingView();
-                        if (task.isSuccessful()) {
-                            OffiMate.firebaseUser = OffiMate.mAuth.getCurrentUser();
+        OffiMate.mAuth.signInWithEmailAndPassword(this.userEmail, this.userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    OffiMate.firebaseUser = OffiMate.mAuth.getCurrentUser();
+                    userId =  OffiMate.firebaseUser.getUid();
 
-                            //TODO: Fetch the userOffice and userName
+                    coworkerRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+                            Map.Entry<String, Object> entry = raw.entrySet().iterator().next();
+                            Map<String, String> values = (Map<String, String>) entry.getValue();
+                            userName = values.get("name");
+                            userId   = values.get("userId");
+                            final String officeId = values.get("officeId");
 
-                            OffiMate.realm.executeTransaction(new Realm.Transaction() {
+                            officeRef.orderByKey().equalTo(officeId).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void execute(Realm realm) {
-                                    OffiMate.currentUser = new CurrentUser(
-                                            OffiMate.firebaseUser.getUid(),
-                                            userName, userEmail, userPassword, userOffice);
-                                    realm.copyToRealm(OffiMate.currentUser);
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    stopLoadingView();
+                                    Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+                                    Map.Entry<String, Object> entry = raw.entrySet().iterator().next();
+                                    Map<String, String> values = (Map<String, String>) entry.getValue();
+                                    String officeName = values.get("name");
+                                    userOffice = new Office(officeId, officeName);
+
+                                    //EVERYTHING IS READY TO CONTINUE:
+                                    moveToLoadingActivity();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    stopLoadingView();
+                                    Toast.makeText(LoginActivity.this, "Back-end Office failed.", Toast.LENGTH_SHORT).show();
                                 }
                             });
-
-                            moveToLoadingActivity();
-
-                        } else {
-                            Toast.makeText(LoginActivity.this,
-                                    "Authentication failed.", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                });
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            stopLoadingView();
+                            Toast.makeText(LoginActivity.this, "Back-end Coworkers failed.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    stopLoadingView();
+                    Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void moveToLoadingActivity () {
+
+        //FIRST: SAVE LOCAL DATA
+        OffiMate.realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                OffiMate.currentUser = new CurrentUser(
+                        userId, userName, userEmail, userPassword, userOffice);
+                realm.copyToRealm(OffiMate.currentUser);
+            }
+        });
+
+        //SECOND: GO AHEAD TO NEXT ACTIVITY
         Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
