@@ -109,6 +109,7 @@ public class SignUpPasswordActivity extends AppCompatActivity {
                                     @Override
                                     public void execute(Realm realm) {
                                         OffiMate.currentUser = new CurrentUser(
+                                                OffiMate.firebaseUser.getUid(),
                                                 userName, userEmail, userPassword, userOffice);
                                         realm.copyToRealm(OffiMate.currentUser);
                                     }

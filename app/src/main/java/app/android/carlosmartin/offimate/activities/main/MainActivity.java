@@ -27,22 +27,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void initUI() {
         this.userNameTextView = findViewById(R.id.textViewMainUserName);
-        this.userNameTextView.setText(OffiMate.currentUser.getName());
-        Log.d("OffiMate", "initUI: " + this.userNameTextView.getText());
+        String userName = OffiMate.currentUser.getName();
+        String userUID = OffiMate.currentUser.getUid();
+        this.userNameTextView.setText(userName + " - " + userUID);
 
         this.userEmailTextView = findViewById(R.id.textViewMainUserEmail);
         this.userEmailTextView.setText(OffiMate.currentUser.getEmail());
-        Log.d("OffiMate", "initUI: " + this.userEmailTextView.getText());
 
         this.userPasswordTextView = findViewById(R.id.textViewMainUserPassword);
         this.userPasswordTextView.setText(OffiMate.currentUser.getPassword());
-        Log.d("OffiMate", "initUI: " + this.userPasswordTextView.getText());
 
         this.userOfficeTextView = findViewById(R.id.textViewMainUserOffice);
         String officeId =  OffiMate.currentUser.getOffice().id;
         String officeName = OffiMate.currentUser.getOffice().name;
         String label = officeId + " " + officeName;
         this.userOfficeTextView.setText(label);
-        Log.d("OffiMate", "initUI: " + this.userOfficeTextView.getText());
     }
 }

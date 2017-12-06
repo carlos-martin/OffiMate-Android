@@ -14,7 +14,7 @@ import io.realm.annotations.Required;
 
 public class CurrentUser extends RealmObject {
     @PrimaryKey
-    private int id;
+    private String uid;
 
     @Required
     private String name;
@@ -39,14 +39,18 @@ public class CurrentUser extends RealmObject {
 
     public CurrentUser() {}
 
-    public CurrentUser(String name, String email, String password, Office office) {
-        this.id = OffiMate.CurrentUserID.incrementAndGet();
+    public CurrentUser(String uid, String name, String email, String password, Office office) {
+        this.uid = uid; //OffiMate.CurrentUserID.incrementAndGet().toString();
         this.name = name;
         this.email = email;
         this.password = password;
         this.officeId = office.id;
         this.officeName = office.name;
         //this.channels = new RealmList<Channel>();
+    }
+
+    public String getUid() {
+        return uid;
     }
 
     public String getName() {
