@@ -23,7 +23,10 @@
         <activity android:name=".activities.onboard.SignUpPasswordActivity" />
         <activity android:name=".activities.onboard.LoginActivity" />
         <activity android:name=".activities.onboard.OnBoardActivity" />
-        <activity android:name=".activities.main.MainActivity"></activity>
+        <activity
+            android:name=".activities.main.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
