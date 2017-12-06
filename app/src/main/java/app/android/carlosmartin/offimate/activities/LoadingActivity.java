@@ -1,7 +1,6 @@
 package app.android.carlosmartin.offimate.activities;
 
 import android.content.Intent;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.view.View;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.main.MainActivity;
@@ -26,7 +24,8 @@ public class LoadingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
 
-        final Handler handler = new Handler();
+        //TODO: Verify if the user has verified the email
+
         if (OffiMate.currentUser == null && OffiMate.firebaseUser == null) {
             stopLoading();
             goToOnBoardActivity();
@@ -44,7 +43,6 @@ public class LoadingActivity extends AppCompatActivity {
                     }
                 }
             });
-
         } else {
             stopLoading();
             goToMainActivity();

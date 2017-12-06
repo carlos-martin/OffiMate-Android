@@ -2,6 +2,9 @@ package app.android.carlosmartin.offimate.models;
 
 import android.support.annotation.NonNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by carlos.martin on 17/11/2017.
  */
@@ -30,6 +33,14 @@ public class Coworker implements Comparable<Coworker> {
                 "└── office: " + this.office + "\n";
     }
 
+    public Map<String, String> toMap() {
+        HashMap<String, String> result = new HashMap<>();
+        result.put("email",     this.email);
+        result.put("name",      this.name);
+        result.put("officeId",  this.office.id);
+        result.put("userId",    this.uid);
+        return result;
+    }
 
     @Override
     public int compareTo(@NonNull Coworker coworker) {

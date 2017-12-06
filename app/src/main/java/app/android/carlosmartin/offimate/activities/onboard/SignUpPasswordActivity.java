@@ -17,22 +17,33 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Map;
 
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.LoadingActivity;
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
+import app.android.carlosmartin.offimate.models.Coworker;
 import app.android.carlosmartin.offimate.models.Office;
 import app.android.carlosmartin.offimate.user.CurrentUser;
 import io.realm.Realm;
 
 public class SignUpPasswordActivity extends AppCompatActivity {
 
+    //Firebase
+    private FirebaseDatabase database;
+    private DatabaseReference coworkerRef;
+
     //DataSource
     private String userName;
     private String userEmail;
     private Office userOffice;
     private String userPassword;
+    private String userId;
 
     //UI
     private TextView textViewPassword;
@@ -44,6 +55,7 @@ public class SignUpPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_password);
         this.initUI();
+        this.initFirebase();
     }
 
     private void initUI() {
@@ -80,18 +92,16 @@ public class SignUpPasswordActivity extends AppCompatActivity {
             this.userEmail = bundle.getString("user_email");
             this.userOffice = (Office) bundle.getSerializable("user_office");
         }
+    }
 
-        Log.d("{{userName}}:", this.userName);
-        Log.d("{{userEmail}}:", this.userEmail);
-        Log.d("{{userOffice}}:", this.userOffice.toString());
+    private void initFirebase() {
+        this.database =     FirebaseDatabase.getInstance();
+        this.coworkerRef =  this.database.getReference("coworkers");
     }
 
     private void createUserAccount() {
         this.userPassword = this.editTextPassword.getText().toString();
         if (Tools.isValidPassword(this.userPassword)) {
-            /*
-             * TODO: Create user account
-             */
 
             startLoadingView();
 
@@ -100,22 +110,11 @@ public class SignUpPasswordActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     stopLoadingView();
                     if (task.isSuccessful()) {
-
-                        //TODO: Create Coworker entry
-
                         OffiMate.firebaseUser = OffiMate.mAuth.getCurrentUser();
-                        OffiMate.realm.executeTransaction(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                OffiMate.currentUser = new CurrentUser(
-                                        OffiMate.firebaseUser.getUid(),
-                                        userName, userEmail, userPassword, userOffice);
-                                realm.copyToRealm(OffiMate.currentUser);
-                            }
-                        });
+                        userId = OffiMate.firebaseUser.getUid();
 
+                        createCoworker();
                         moveToLoadingActivity();
-
                     } else {
                         Toast.makeText(SignUpPasswordActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -133,11 +132,28 @@ public class SignUpPasswordActivity extends AppCompatActivity {
         }
     }
 
+    private void createCoworker() {
+        DatabaseReference newCoworkerRef = this.coworkerRef.push();
+        Coworker coworker = new Coworker("", this.userId, this.userEmail, this.userName, this.userOffice);
+        Map<String, String> coworkerValues = coworker.toMap();
+        newCoworkerRef.setValue(coworkerValues);
+    }
+
     //MARK: - Navigation
 
     private void moveToLoadingActivity () {
-        Intent intent = new Intent(SignUpPasswordActivity.this,
-                LoadingActivity.class);
+        //FIRST LOCAL STORAGE
+        OffiMate.realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                OffiMate.currentUser = new CurrentUser(
+                        userId, userName, userEmail, userPassword, userOffice);
+                realm.copyToRealm(OffiMate.currentUser);
+            }
+        });
+
+        //FINAL GO TO LOADING ACTIVITY
+        Intent intent = new Intent(SignUpPasswordActivity.this, LoadingActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
