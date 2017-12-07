@@ -5,7 +5,6 @@
         android:id="@+id/next_bar_button_item"
         android:title="Next"
         android:icon="@drawable/ic_action_next"
-        android:iconTint="@color/colorAccent"
         app:showAsAction="ifRoom"
         />
 </menu>

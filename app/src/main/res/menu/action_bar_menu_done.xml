@@ -4,8 +4,7 @@
     <item
         android:id="@+id/done_bar_button_item"
         android:title="Done"
-        android:icon="@drawable/ic_action_sent"
-        android:iconTint="@color/colorAccent"
+        android:icon="@drawable/ic_action_login"
         app:showAsAction="ifRoom"
         />
 </menu>
