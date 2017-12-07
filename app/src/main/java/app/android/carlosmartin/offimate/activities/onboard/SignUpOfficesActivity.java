@@ -3,7 +3,6 @@ package app.android.carlosmartin.offimate.activities.onboard;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -37,7 +36,7 @@ public class SignUpOfficesActivity extends AppCompatActivity implements ListView
     private List<Office> officeList;
 
     //UI
-    private TextView textViewOffice;
+    private TextView officeTextView;
     private ListView listView;
     private SignUpOfficesListAdapter adapter;
 
@@ -59,8 +58,8 @@ public class SignUpOfficesActivity extends AppCompatActivity implements ListView
 
         this.stopLoadingView();
 
-        this.textViewOffice = findViewById(R.id.textViewOffice);
-        this.textViewOffice.setText("WHAT'S YOUR SIGMA OFFICE?");
+        this.officeTextView = findViewById(R.id.textViewOffice);
+        this.officeTextView.setText("WHAT'S YOUR SIGMA OFFICE?");
 
         //Fetching data from the intent
         Bundle bundle = getIntent().getExtras();
@@ -69,15 +68,14 @@ public class SignUpOfficesActivity extends AppCompatActivity implements ListView
             this.userEmail = bundle.getString("user_email");
         }
 
-    }
-
-    private void initListView() {
         this.listView = findViewById(R.id.officeListView);
         this.listView.setOnItemClickListener(this);
+    }
 
+    private void reloadListView() {
         this.adapter = new SignUpOfficesListAdapter(this, R.layout.list_item_offices, this.officeList);
         this.listView.setAdapter(this.adapter);
-        registerForContextMenu(listView);
+        registerForContextMenu(this.listView);
     }
 
     private void initFirebase() {
@@ -105,7 +103,7 @@ public class SignUpOfficesActivity extends AppCompatActivity implements ListView
                     }
                     officeList.add(new Office(id, name));
                 }
-                initListView();
+                reloadListView();
                 stopLoadingView();
             }
 

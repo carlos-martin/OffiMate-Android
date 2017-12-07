@@ -13,62 +13,133 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.onboard.OnBoardActivity;
+import app.android.carlosmartin.offimate.adapters.main.ChannelsListAdapter;
 import app.android.carlosmartin.offimate.application.OffiMate;
+import app.android.carlosmartin.offimate.models.Channel;
 import app.android.carlosmartin.offimate.user.CurrentUser;
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ListView.OnItemClickListener {
 
     //UI
-    Toolbar toolbar;
-    DrawerLayout drawer;
-    ActionBarDrawerToggle toggle;
-    NavigationView navigationView;
-    //UI Header
-    View headerLayout;
-    ImageView headerImageView;
-    TextView headerNameTextView;
-    TextView headerEmailTextView;
-    FloatingActionButton actionButton;
-    //UI Menu
-    Menu leftSideMenu;
-    MenuItem officeMenuItem;
-    MenuItem passwordMenuItem;
-    Boolean isPasswordHide = true;
-    String hidePassword = "";
-    String showPassword = OffiMate.currentUser.getPassword();
+    private Toolbar               toolbar;
+    private DrawerLayout          drawer;
+    private ActionBarDrawerToggle toggle;
+    private NavigationView        navigationView;
 
+    private View      headerLayout;
+    private ImageView headerImageView;
+    private TextView  headerNameTextView;
+    private TextView  headerEmailTextView;
+
+    private FloatingActionButton actionButton;
+
+    private Menu     leftSideMenu;
+    private MenuItem officeMenuItem;
+    private MenuItem passwordMenuItem;
+    private Boolean  isPasswordHide = true;
+    private String   hidePassword = "";
+    private String   showPassword = OffiMate.currentUser.getPassword();
+
+    private TextView channelTextView;
+    private ListView listView;
+    private ChannelsListAdapter adapter;
+
+    //DataSource
+    private List<Channel> channelList;
+
+    //Firebase
+    private FirebaseDatabase database;
+    private DatabaseReference officeRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.initFirebase();
         this.initUI();
+        this.observerChannel();
+    }
+
+    private void initFirebase() {
+        this.database = FirebaseDatabase.getInstance();
+        this.officeRef = this.database.getReference("channels");
     }
 
     private void initUI() {
         //Navigation Title
         setTitle("OffiMate");
-
         for (int i = 0; i < this.showPassword.length(); i++) {
             this.hidePassword += "×";
         }
-
         //FloatingButton
         this.initFloatingButton();
-
         //LeftSideMenu
         this.initLeftSideMenu();
-
         //Navigation
         this.initNavigationView();
+        //ListView
+        this.listView = findViewById(R.id.channelListView);
+        this.listView.setOnItemClickListener(this);
+    }
+
+    private void reloadListView() {
+        this.adapter = new ChannelsListAdapter(this, R.layout.list_item_channels, this.channelList);
+        this.listView.setAdapter(this.adapter);
+        registerForContextMenu(this.listView);
+    }
+
+    private void observerChannel() {
+        this.startLoadingView();
+
+        this.channelList = new ArrayList<Channel>();
+        this.officeRef.orderByChild("officeId").equalTo(OffiMate.currentUser.getOffice().id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+
+                String channelId;
+                String channelName;
+                String channelCreatorId;
+
+                if (raw.size() > 0) {
+                    for (Map.Entry<String, Object> item : raw.entrySet()) {
+                        channelId = item.getKey();
+                        Map<String, String> rawChannel = (Map<String, String>) item.getValue();
+                        channelName =       (String) rawChannel.get("name");
+                        channelCreatorId =  (String) rawChannel.get("creator");
+                        channelList.add(new Channel(channelId, channelName, channelCreatorId));
+                    }
+                }
+                stopLoadingView();
+                reloadListView();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                stopLoadingView();
+                Toast.makeText(MainActivity.this, "Firebase error", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void initFloatingButton() {
@@ -116,7 +187,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         this.passwordMenuItem = this.leftSideMenu.findItem(R.id.nav_password);
         this.changeViewPassword();
-
     }
 
     @Override
@@ -224,5 +294,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(MainActivity.this, OnBoardActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    //MARK: - List view function
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    //MARK: - Loading View
+
+    private void startLoadingView () {
+        findViewById(R.id.mainLoadingPanel).setVisibility(View.VISIBLE);
+    }
+
+    private void stopLoadingView() {
+        findViewById(R.id.mainLoadingPanel).setVisibility(View.GONE);
     }
 }

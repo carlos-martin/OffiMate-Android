@@ -14,7 +14,7 @@
         android:layout_marginRight="22dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
-        app:srcCompat="@drawable/ic_action_office" />
+        app:srcCompat="@drawable/ic_action_channel" />
 
     <TextView
         android:id="@+id/textViewCell"
@@ -23,5 +23,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical" />
+
 
 </LinearLayout>
