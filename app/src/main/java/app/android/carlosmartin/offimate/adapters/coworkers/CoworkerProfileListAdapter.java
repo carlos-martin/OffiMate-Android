@@ -73,6 +73,15 @@ public class CoworkerProfileListAdapter extends BaseAdapter {
         return convertView;
     }
 
+    @Override
+    public boolean isEnabled(int position) {
+        if (position == 0) {
+            return false;
+        } else {
+            return super.isEnabled(position);
+        }
+    }
+
     static class ViewHolder {
         private TextView optionTextView;
         private ImageView iconImageView;

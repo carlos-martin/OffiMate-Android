@@ -1,5 +1,6 @@
 package app.android.carlosmartin.offimate.activities.coworkers;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -69,6 +70,8 @@ public class CoworkerProfileActivity extends AppCompatActivity implements ListVi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        Intent intent = new Intent(CoworkerProfileActivity.this, BoostCardsActivity.class);
+        intent.putExtra("coworker", this.coworker);
+        startActivity(intent);
     }
 }

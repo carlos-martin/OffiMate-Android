@@ -15,9 +15,9 @@
 
         <ImageView
             android:id="@+id/coworkerProfileImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:srcCompat="@mipmap/ic_profile" />
@@ -25,7 +25,7 @@
         <TextView
             android:id="@+id/coworkerProfileNameTextView"
             android:text="Carlos Manuel Martín Cornejo"
-            android:textSize="26dp"
+            android:textSize="24dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
