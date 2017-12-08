@@ -1,5 +1,6 @@
 package app.android.carlosmartin.offimate.activities.coworkers;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -169,5 +170,8 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
 
     private void goToCoworkerProfileAcitivity() {
         //TODO: complete to go to selected coworker profile activity.
+        Intent intent = new Intent(CoworkersActivity.this, CoworkerProfileActivity.class);
+        intent.putExtra("coworker", this.selectedCoworker);
+        startActivity(intent);
     }
 }

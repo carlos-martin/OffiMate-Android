@@ -2,6 +2,7 @@ package app.android.carlosmartin.offimate.models;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +10,7 @@ import java.util.Map;
  * Created by carlos.martin on 17/11/2017.
  */
 
-public class Coworker implements Comparable<Coworker> {
+public class Coworker implements Comparable<Coworker>, Serializable {
     public final String id;
     public final String uid;
     public final String email;
