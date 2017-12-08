@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import app.android.carlosmartin.offimate.R;
+import app.android.carlosmartin.offimate.activities.coworkers.CoworkersActivity;
 import app.android.carlosmartin.offimate.activities.onboard.OnBoardActivity;
 import app.android.carlosmartin.offimate.adapters.main.ChannelsListAdapter;
 import app.android.carlosmartin.offimate.application.OffiMate;
@@ -219,9 +220,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void goToCoworkersActivity() {
-        Toast.makeText(
-                MainActivity.this, "TO COWORKERS ACTIVITY", Toast.LENGTH_SHORT)
-                .show();
+        Intent intent = new Intent(MainActivity.this, CoworkersActivity.class);
+        startActivity(intent);
     }
 
     //MARK: - Left Side Menu
@@ -257,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void goToSelectionOffice() {
+        //TODO: complete to go to selection office activity
         //Toast.makeText(MainActivity.this, "TO SELECTION OFFICE ACTIVITY", Toast.LENGTH_SHORT).show();
     }
 
@@ -273,10 +274,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void goToBoostCardInbox() {
+        //TODO: complete to go to Inbox Boost Card Activity
         //Toast.makeText(MainActivity.this, "TO INBOX ACTIVITY", Toast.LENGTH_SHORT).show();
     }
 
     private void goToBoostCardSend() {
+        //TODO: complete to go to Sent Boost Card Activity
         //Toast.makeText(MainActivity.this, "TO SENT ACTIVITY", Toast.LENGTH_SHORT).show();
     }
 
@@ -300,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        //TODO: complete to go to selected channel activity.
     }
 
     //MARK: - Loading View

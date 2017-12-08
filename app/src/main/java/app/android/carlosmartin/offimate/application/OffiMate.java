@@ -55,7 +55,7 @@ public class OffiMate extends Application {
         //Fetching currentUser
         this.results = this.realm.where(CurrentUser.class).findAll();
         if (this.results.size() > 0) {
-            this.currentUser = this.results.first();
+            this.currentUser = new CurrentUser(this.results.first());
         } else {
             this.currentUser = null;
         }

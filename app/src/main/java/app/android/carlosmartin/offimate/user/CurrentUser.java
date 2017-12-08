@@ -48,6 +48,14 @@ public class CurrentUser extends RealmObject {
         this.officeName = office.name;
         //this.channels = new RealmList<Channel>();
     }
+    public CurrentUser(CurrentUser currentUser) {
+        this.uid = currentUser.getUid();
+        this.name = currentUser.getName();
+        this.email = currentUser.getEmail();
+        this.password = currentUser.getPassword();
+        this.officeId = currentUser.getOffice().id;
+        this.officeName = currentUser.getOffice().name;
+    }
 
     public String getUid() {
         return uid;

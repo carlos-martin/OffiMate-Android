@@ -19,21 +19,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/imageViewCell"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="16dp"
-            app:srcCompat="@drawable/ic_action_channel" />
-
         <TextView
             android:id="@+id/textViewCell"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Channel Name"
+            android:layout_marginLeft="8dp"
+            android:text="Carlos Manuel Martín Cornejo"
             android:textSize="18dp" />
     </LinearLayout>
 
@@ -58,8 +50,5 @@
             tools:layout_editor_absoluteX="312dp"
             tools:layout_editor_absoluteY="11dp" />
     </LinearLayout>
-
-
-
 
 </android.support.constraint.ConstraintLayout>
