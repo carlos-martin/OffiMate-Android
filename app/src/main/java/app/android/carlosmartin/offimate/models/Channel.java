@@ -26,6 +26,7 @@ public class Channel implements Comparable<Channel> {
         this.message = message;
     }
 
+    @Override
     public String toString() {
         return "Channel:\n" +
                 "├── id:      " + this.id + "\n" +

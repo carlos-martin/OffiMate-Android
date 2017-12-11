@@ -18,12 +18,22 @@ public class Office implements Comparable<Office>, Serializable {
     }
 
     @Override
+    public String toString() {
+        return this.name;
+    }
+
+    @Override
     public int compareTo(@NonNull Office office) {
         return this.id.compareTo(office.id);
     }
 
     @Override
-    public String toString() {
-        return this.name;
+    public boolean equals(@NonNull Object obj) {
+        if (!Office.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        } else {
+            final Office office = (Office) obj;
+            return this.id.equals(office.id);
+        }
     }
 }

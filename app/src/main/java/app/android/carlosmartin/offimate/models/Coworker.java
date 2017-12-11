@@ -25,15 +25,6 @@ public class Coworker implements Comparable<Coworker>, Serializable {
         this.office = office;
     }
 
-    public String toString() {
-        return "Coworker:\n" +
-                "├── id:     " + this.id + "\n" +
-                "├── uid:    " + this.uid + "\n" +
-                "├── name:   " + this.name + "\n" +
-                "├── email:  " + this.email + "\n" +
-                "└── office: " + this.office + "\n";
-    }
-
     public Map<String, String> toMap() {
         HashMap<String, String> result = new HashMap<>();
         result.put("email",     this.email);
@@ -44,7 +35,27 @@ public class Coworker implements Comparable<Coworker>, Serializable {
     }
 
     @Override
+    public String toString() {
+        return "Coworker:\n" +
+                "├── id:     " + this.id + "\n" +
+                "├── uid:    " + this.uid + "\n" +
+                "├── name:   " + this.name + "\n" +
+                "├── email:  " + this.email + "\n" +
+                "└── office: " + this.office + "\n";
+    }
+
+    @Override
     public int compareTo(@NonNull Coworker coworker) {
         return this.id.compareTo(coworker.id);
+    }
+
+    @Override
+    public boolean equals(@NonNull Object obj) {
+        if (!Coworker.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        } else {
+            final Coworker coworker = (Coworker) obj;
+            return this.id.equals(coworker.id);
+        }
     }
 }

@@ -19,6 +19,7 @@ public class Message implements Comparable<Message> {
         this.date = date;
     }
 
+    @Override
     public String toString() {
         return "Message:\n" +
                 "   ├── id:        " + this.id + "\n" +
@@ -30,5 +31,15 @@ public class Message implements Comparable<Message> {
     @Override
     public int compareTo(@NonNull Message message) {
         return this.date - message.date;
+    }
+
+    @Override
+    public boolean equals(@NonNull Object obj) {
+        if (!Message.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        } else {
+            final Message message = (Message) obj;
+            return this.id.equals(message.id);
+        }
     }
 }
