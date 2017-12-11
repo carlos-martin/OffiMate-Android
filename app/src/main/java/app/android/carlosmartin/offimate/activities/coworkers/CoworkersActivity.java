@@ -9,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,7 +42,7 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
     private CoworkersListAdapter adapter;
 
     //DataSource
-    private List<Coworker> coworkerList;
+    private List<Coworker> coworkerList = new ArrayList<Coworker>();
     private Coworker selectedCoworker;
     private int loadingCounter;
 
@@ -50,7 +51,6 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coworkers);
-        
         this.initFirebase();
         this.initUI();
         this.observerCoworker();
@@ -58,74 +58,125 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
 
     private void observerCoworker() {
         this.startLoadingView();
+        final String currentOfficeId = OffiMate.currentUser.getOffice().id;
 
-        this.coworkerList = new ArrayList<Coworker>();
-        this.coworkerRef.orderByChild("officeId").equalTo(OffiMate.currentUser.getOffice().id).addValueEventListener(new ValueEventListener() {
+        ChildEventListener childEventListener = new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Map<String, String> raw = (Map<String, String>) dataSnapshot.getValue();
 
-                if (raw != null && raw.size() > 1) {
-                    loadingCounter = raw.size()-1;
-                    for (Map.Entry<String, Object> item : raw.entrySet()) {
-                        Map<String, String> rawCoworker = (Map<String, String>) item.getValue();
+                final String id = dataSnapshot.getKey();
+                final String email    = raw.get("email");
+                final String name     = raw.get("name");
+                final String userId   = raw.get("userId");
+                final String officeId = raw.get("officeId");
 
-                        final String id       = item.getKey();
-                        final String email    = rawCoworker.get("email");
-                        final String name     = rawCoworker.get("name");
-                        final String userId   = rawCoworker.get("userId");
-                        final String officeId = rawCoworker.get("officeId");
+                if (!email.equals(OffiMate.currentUser.getEmail())) {
+                    officeRef.orderByKey().equalTo(officeId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            stopLoadingView();
+                            Map<String, Object>       raw    = (Map<String, Object>) dataSnapshot.getValue();
+                            Map.Entry<String, Object> entry  = raw.entrySet().iterator().next();
+                            Map<String, String>       values = (Map<String, String>) entry.getValue();
 
-                        if (!email.equals(OffiMate.currentUser.getEmail())) {
-                            officeRef.orderByKey().equalTo(officeId).addListenerForSingleValueEvent(new ValueEventListener() {
+                            String officeName = values.get("name");
+                            Office office = new Office(officeId, officeName);
+
+                            coworkerList.add(new Coworker(id, userId, email, name, office));
+
+                            Collections.sort(coworkerList, new Comparator<Coworker>() {
                                 @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    stopLoadingView();
-                                    Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
-                                    Map.Entry<String, Object> entry = raw.entrySet().iterator().next();
-                                    Map<String, String> values = (Map<String, String>) entry.getValue();
-                                    String officeName = values.get("name");
-                                    Office office = new Office(officeId, officeName);
-
-                                    //EVERYTHING IS READY TO CONTINUE:
-                                    coworkerList.add(new Coworker(id, userId, email, name, office));
-
-                                    loadingCounter--;
-                                    if (loadingCounter == 0) {
-                                        Collections.sort(coworkerList, new Comparator<Coworker>() {
-                                            @Override
-                                            public int compare(Coworker o1, Coworker o2) {
-                                                return o1.name.compareTo(o2.name);
-                                            }
-                                        });
-                                        stopLoadingView();
-                                        reloadListView();
-                                    }
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    stopLoadingView();
-                                    Toast.makeText(CoworkersActivity.this, "Firebase Office failed.", Toast.LENGTH_SHORT).show();
+                                public int compare(Coworker o1, Coworker o2) {
+                                    return o1.name.compareTo(o2.name);
                                 }
                             });
+                            stopLoadingView();
+                            reloadListView();
                         }
 
-                    }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            stopLoadingView();
+                            Toast.makeText(CoworkersActivity.this, "Firebase Office failed.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Map<String, String> raw = (Map<String, String>) dataSnapshot.getValue();
+
+                String id = dataSnapshot.getKey();
+                String email    = raw.get("email");
+                String name     = raw.get("name");
+                String userId   = raw.get("userId");
+                String officeId = raw.get("officeId");
+
+                if (!officeId.equals(OffiMate.currentUser.getOffice().id)) {
+                    Coworker toRemove = new Coworker(id, userId, email, name, new Office(officeId, ""));
+                    coworkerList.remove(toRemove);
                 } else {
-                    stopLoadingView();
-                    reloadListView();
+                    Coworker toUpdate = new Coworker(id, userId, email, name, OffiMate.currentUser.getOffice());
+                    int index = coworkerList.indexOf(toUpdate);
+                    coworkerList.set(index, toUpdate);
                 }
 
+                stopLoadingView();
+                reloadListView();
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Map<String, String> raw = (Map<String, String>) dataSnapshot.getValue();
+
+                String id = dataSnapshot.getKey();
+                String email    = raw.get("email");
+                String name     = raw.get("name");
+                String userId   = raw.get("userId");
+                String officeId = raw.get("officeId");
+                coworkerList.remove(new Coworker(id, userId, email, name, new Office(officeId,"")));
+
+                stopLoadingView();
+                reloadListView();
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                //TODO: onChildMoved never will happen
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                stopLoadingView();
-                Toast.makeText(CoworkersActivity.this, "Firebase error", Toast.LENGTH_LONG).show();
+                View view = findViewById(R.id.actionButton);
+                String message = "Firebase error.";
+                Tools.showInfoMessage(view, message);
             }
-        });
+        };
+
+        this.coworkerRef.orderByChild("officeId").equalTo(currentOfficeId)
+                .addChildEventListener(childEventListener);
+
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() <= 1) {
+                    stopLoadingView();
+                    reloadListView();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                View view = findViewById(R.id.actionButton);
+                String message = "Firebase error.";
+                Tools.showInfoMessage(view, message);
+            }
+        };
+
+        this.coworkerRef.orderByChild("officeId").equalTo(currentOfficeId)
+                .addValueEventListener(valueEventListener);
     }
 
     private void reloadListView() {
@@ -157,6 +208,14 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
         this.officeRef =   this.database.getReference("office");
     }
 
+    //MARK: - List view function
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        this.selectedCoworker = this.coworkerList.get(position);
+        this.goToCoworkerProfileActivity();
+    }
+
     //MARK: - Loading View
 
     private void startLoadingView() {
@@ -167,18 +226,9 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
         findViewById(R.id.coworkersLoadingPanel).setVisibility(View.GONE);
     }
 
-    //MARK: - List view function
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        this.selectedCoworker = this.coworkerList.get(position);
-        this.goToCoworkerProfileAcitivity();
-    }
-
     //MARK: - Navigation
 
-    private void goToCoworkerProfileAcitivity() {
-        //TODO: complete to go to selected coworker profile activity.
+    private void goToCoworkerProfileActivity() {
         Intent intent = new Intent(CoworkersActivity.this, CoworkerProfileActivity.class);
         intent.putExtra("coworker", this.selectedCoworker);
         startActivity(intent);

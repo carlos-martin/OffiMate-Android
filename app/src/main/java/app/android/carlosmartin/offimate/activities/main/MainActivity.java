@@ -17,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -37,7 +36,6 @@ import app.android.carlosmartin.offimate.adapters.main.ChannelsListAdapter;
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Channel;
-import app.android.carlosmartin.offimate.user.CurrentUser;
 import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ListView.OnItemClickListener {
@@ -71,29 +69,100 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     //Firebase
     private FirebaseDatabase database;
-    private DatabaseReference officeRef;
+    private DatabaseReference channelRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         this.initFirebase();
         this.initUI();
         this.observerChannel();
     }
 
-    /**
-    @Override
-    protected void onStart() {
-        super.onStart();
-        this.observerChannel();
-    }
-    */
+    private void observerChannel() {
+        this.startLoadingView();
+        String currentOfficeId = OffiMate.currentUser.getOffice().id;
 
-    private void initFirebase() {
-        this.database = FirebaseDatabase.getInstance();
-        this.officeRef = this.database.getReference("channels");
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Map<String, String> raw = (Map<String, String>) dataSnapshot.getValue();
+
+                String channelId = dataSnapshot.getKey();
+                String channelName =      raw.get("name");
+                String channelCreatorId = raw.get("creator");
+                channelList.add(new Channel(channelId, channelName, channelCreatorId));
+
+                stopLoadingView();
+                reloadListView();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                //TODO: update the message counter
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Map<String, String> raw = (Map<String, String>) dataSnapshot.getValue();
+
+                String channelId = dataSnapshot.getKey();
+                String channelName =      raw.get("name");
+                String channelCreatorId = raw.get("creator");
+                channelList.remove(new Channel(channelId, channelName, channelCreatorId));
+
+                stopLoadingView();
+                reloadListView();
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                //TODO: onChildMoved never will happen
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                View view = findViewById(R.id.actionButton);
+                String message = "Firebase error.";
+                Tools.showInfoMessage(view, message);
+            }
+        };
+
+        this.channelRef.orderByChild("officeId").equalTo(currentOfficeId)
+                .addChildEventListener(childEventListener);
+
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() == 0) {
+                    stopLoadingView();
+                    reloadListView();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                View view = findViewById(R.id.actionButton);
+                String message = "Firebase error.";
+                Tools.showInfoMessage(view, message);
+            }
+        };
+
+        this.channelRef.orderByChild("officeId").equalTo(currentOfficeId)
+                .addValueEventListener(valueEventListener);
+    }
+
+    private void reloadListView() {
+        if (this.channelList == null || this.channelList.size() <= 0) {
+            View view = findViewById(R.id.actionButton);
+            String message = "There are no channel yet.";
+            Tools.showInfoMessage(view, message);
+        }
+
+        this.adapter = new ChannelsListAdapter(this, R.layout.list_item_channels, this.channelList);
+        this.listView.setAdapter(this.adapter);
+        registerForContextMenu(this.listView);
     }
 
     private void initUI() {
@@ -113,72 +182,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.listView.setOnItemClickListener(this);
     }
 
-    private void reloadListView() {
-        if (this.channelList == null || this.channelList.size() <= 0) {
-            View view = findViewById(R.id.actionButton);
-            Tools.showInfoMessage(view, "There are no channel yet.");
-        }
-
-        this.adapter = new ChannelsListAdapter(this, R.layout.list_item_channels, this.channelList);
-        this.listView.setAdapter(this.adapter);
-        registerForContextMenu(this.listView);
-    }
-
-    private void observerChannel() {
-        this.startLoadingView();
-
-        String currentOfficeId = OffiMate.currentUser.getOffice().id;
-
-        ChildEventListener childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //TODO: add the new channel to the list
-                Map<String, String> raw = (Map<String, String>) dataSnapshot.getValue();
-
-                String channelId = dataSnapshot.getKey();
-                String channelName =      raw.get("name");
-                String channelCreatorId = raw.get("creator");
-                channelList.add(new Channel(channelId, channelName, channelCreatorId));
-
-                stopLoadingView();
-                reloadListView();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                //TODO: update the message counter
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                //TODO: remove the channel from the list
-                Map<String, String> raw = (Map<String, String>) dataSnapshot.getValue();
-
-                String channelId = dataSnapshot.getKey();
-                String channelName =      raw.get("name");
-                String channelCreatorId = raw.get("creator");
-                channelList.remove(new Channel(channelId, channelName, channelCreatorId));
-
-                stopLoadingView();
-                reloadListView();
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                //TODO: that never will happen
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //TODO: show error message
-
-            }
-        };
-        this.officeRef.orderByChild("officeId").equalTo(currentOfficeId).addChildEventListener(childEventListener);
-
-
+    private void initFirebase() {
+        this.database = FirebaseDatabase.getInstance();
+        this.channelRef = this.database.getReference("channels");
     }
 
     private void initFloatingButton() {
@@ -294,11 +300,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void goToSelectionOffice() {
-        //TODO: complete to go to selection office activity
-        //Toast.makeText(MainActivity.this, "TO SELECTION OFFICE ACTIVITY", Toast.LENGTH_SHORT).show();
-    }
-
     private void changeViewPassword() {
         if (this.isPasswordHide) {
             this.passwordMenuItem.setTitle(this.hidePassword);
@@ -309,16 +310,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             this.passwordMenuItem.setIcon(R.drawable.ic_action_hide);
             this.isPasswordHide = true;
         }
-    }
-
-    private void goToBoostCardInbox() {
-        //TODO: complete to go to Inbox Boost Card Activity
-        //Toast.makeText(MainActivity.this, "TO INBOX ACTIVITY", Toast.LENGTH_SHORT).show();
-    }
-
-    private void goToBoostCardSend() {
-        //TODO: complete to go to Sent Boost Card Activity
-        //Toast.makeText(MainActivity.this, "TO SENT ACTIVITY", Toast.LENGTH_SHORT).show();
     }
 
     private void logOutAction() {
@@ -352,5 +343,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void stopLoadingView() {
         findViewById(R.id.mainLoadingPanel).setVisibility(View.GONE);
+    }
+
+    //MARK: - Navigation
+
+    private void goToSelectionOffice() {
+        //TODO: complete to go to selection office activity
+        //Toast.makeText(MainActivity.this, "TO SELECTION OFFICE ACTIVITY", Toast.LENGTH_SHORT).show();
+    }
+
+    private void goToBoostCardInbox() {
+        //TODO: complete to go to Inbox Boost Card Activity
+        //Toast.makeText(MainActivity.this, "TO INBOX ACTIVITY", Toast.LENGTH_SHORT).show();
+    }
+
+    private void goToBoostCardSend() {
+        //TODO: complete to go to Sent Boost Card Activity
+        //Toast.makeText(MainActivity.this, "TO SENT ACTIVITY", Toast.LENGTH_SHORT).show();
     }
 }
