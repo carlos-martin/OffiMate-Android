@@ -38,4 +38,14 @@ public class Channel implements Comparable<Channel> {
     public int compareTo(@NonNull Channel channel) {
         return this.id.compareTo(channel.id);
     }
+
+    @Override
+    public boolean equals(@NonNull Object obj) {
+        if (!Channel.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        } else {
+            final Channel channel = (Channel) obj;
+            return this.id.equals(channel.id);
+        }
+    }
 }

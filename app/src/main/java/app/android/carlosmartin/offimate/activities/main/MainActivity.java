@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ChannelsListAdapter adapter;
 
     //DataSource
-    private List<Channel> channelList;
+    private List<Channel> channelList = new ArrayList<Channel>();
 
     //Firebase
     private FirebaseDatabase database;
@@ -82,11 +83,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.observerChannel();
     }
 
+    /**
     @Override
     protected void onStart() {
         super.onStart();
         this.observerChannel();
     }
+    */
 
     private void initFirebase() {
         this.database = FirebaseDatabase.getInstance();
@@ -124,35 +127,58 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void observerChannel() {
         this.startLoadingView();
 
-        this.channelList = new ArrayList<Channel>();
-        this.officeRef.orderByChild("officeId").equalTo(OffiMate.currentUser.getOffice().id).addListenerForSingleValueEvent(new ValueEventListener() {
+        String currentOfficeId = OffiMate.currentUser.getOffice().id;
+
+        ChildEventListener childEventListener = new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                //TODO: add the new channel to the list
+                Map<String, String> raw = (Map<String, String>) dataSnapshot.getValue();
 
-                String channelId;
-                String channelName;
-                String channelCreatorId;
+                String channelId = dataSnapshot.getKey();
+                String channelName =      raw.get("name");
+                String channelCreatorId = raw.get("creator");
+                channelList.add(new Channel(channelId, channelName, channelCreatorId));
 
-                if (raw != null && raw.size() > 0) {
-                    for (Map.Entry<String, Object> item : raw.entrySet()) {
-                        channelId = item.getKey();
-                        Map<String, String> rawChannel = (Map<String, String>) item.getValue();
-                        channelName =       (String) rawChannel.get("name");
-                        channelCreatorId =  (String) rawChannel.get("creator");
-                        channelList.add(new Channel(channelId, channelName, channelCreatorId));
-                    }
-                }
                 stopLoadingView();
                 reloadListView();
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                stopLoadingView();
-                Toast.makeText(MainActivity.this, "Firebase error", Toast.LENGTH_LONG).show();
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                //TODO: update the message counter
+
             }
-        });
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                //TODO: remove the channel from the list
+                Map<String, String> raw = (Map<String, String>) dataSnapshot.getValue();
+
+                String channelId = dataSnapshot.getKey();
+                String channelName =      raw.get("name");
+                String channelCreatorId = raw.get("creator");
+                channelList.remove(new Channel(channelId, channelName, channelCreatorId));
+
+                stopLoadingView();
+                reloadListView();
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                //TODO: that never will happen
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //TODO: show error message
+
+            }
+        };
+        this.officeRef.orderByChild("officeId").equalTo(currentOfficeId).addChildEventListener(childEventListener);
+
+
     }
 
     private void initFloatingButton() {

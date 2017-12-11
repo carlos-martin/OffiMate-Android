@@ -55,7 +55,7 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
         this.initUI();
         this.observerCoworker();
     }
-    
+
     private void observerCoworker() {
         this.startLoadingView();
 
