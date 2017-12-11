@@ -7,7 +7,7 @@
         <item
             android:id="@+id/nav_office"
             android:icon="@drawable/ic_action_office"
-            android:title="Office" />
+            android:title="Office"/>
         <item
             android:id="@+id/nav_password"
             android:icon="@drawable/ic_action_show"
