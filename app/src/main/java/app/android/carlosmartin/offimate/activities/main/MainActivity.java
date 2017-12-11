@@ -34,6 +34,7 @@ import app.android.carlosmartin.offimate.activities.coworkers.CoworkersActivity;
 import app.android.carlosmartin.offimate.activities.onboard.OnBoardActivity;
 import app.android.carlosmartin.offimate.adapters.main.ChannelsListAdapter;
 import app.android.carlosmartin.offimate.application.OffiMate;
+import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Channel;
 import app.android.carlosmartin.offimate.user.CurrentUser;
 import io.realm.Realm;
@@ -104,6 +105,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void reloadListView() {
+        if (this.channelList == null || this.channelList.size() <= 0) {
+            View view = findViewById(R.id.actionButton);
+            Tools.showInfoMessage(view, "There are no channel yet.");
+        }
+
         this.adapter = new ChannelsListAdapter(this, R.layout.list_item_channels, this.channelList);
         this.listView.setAdapter(this.adapter);
         registerForContextMenu(this.listView);
@@ -122,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String channelName;
                 String channelCreatorId;
 
-                if (raw.size() > 0) {
+                if (raw != null && raw.size() > 0) {
                     for (Map.Entry<String, Object> item : raw.entrySet()) {
                         channelId = item.getKey();
                         Map<String, String> rawChannel = (Map<String, String>) item.getValue();

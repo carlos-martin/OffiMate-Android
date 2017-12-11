@@ -30,7 +30,6 @@ public class OffiMate extends Application {
 
     @Override
     public void onCreate() {
-        Toast.makeText(this, "WELCOME TO OFFIMATE!", Toast.LENGTH_LONG).show();
         this.firebaseAuth();
         this.realmConfigurationSepUp();
         this.realmFetchingData();

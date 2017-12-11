@@ -1,8 +1,10 @@
 package app.android.carlosmartin.offimate.helpers;
 
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,5 +35,9 @@ public class Tools {
 
         return matcher.matches();
 
+    }
+
+    public static void showInfoMessage(View view, String message) {
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 }
