@@ -82,6 +82,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.observerChannel();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        this.observerChannel();
+    }
+
     private void initFirebase() {
         this.database = FirebaseDatabase.getInstance();
         this.officeRef = this.database.getReference("channels");

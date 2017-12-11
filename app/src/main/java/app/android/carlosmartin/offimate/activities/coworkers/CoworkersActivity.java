@@ -24,6 +24,7 @@ import java.util.Map;
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.adapters.coworkers.CoworkersListAdapter;
 import app.android.carlosmartin.offimate.application.OffiMate;
+import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Coworker;
 import app.android.carlosmartin.offimate.models.Office;
 
@@ -54,17 +55,17 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
         this.initUI();
         this.observerCoworker();
     }
-
+    
     private void observerCoworker() {
         this.startLoadingView();
 
         this.coworkerList = new ArrayList<Coworker>();
-        this.coworkerRef.orderByChild("name").addValueEventListener(new ValueEventListener() {
+        this.coworkerRef.orderByChild("officeId").equalTo(OffiMate.currentUser.getOffice().id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
 
-                if (raw.size() > 0) {
+                if (raw != null && raw.size() > 1) {
                     loadingCounter = raw.size()-1;
                     for (Map.Entry<String, Object> item : raw.entrySet()) {
                         Map<String, String> rawCoworker = (Map<String, String>) item.getValue();
@@ -76,7 +77,6 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
                         final String officeId = rawCoworker.get("officeId");
 
                         if (!email.equals(OffiMate.currentUser.getEmail())) {
-
                             officeRef.orderByKey().equalTo(officeId).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -113,7 +113,11 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
                         }
 
                     }
+                } else {
+                    stopLoadingView();
+                    reloadListView();
                 }
+
             }
 
             @Override
@@ -125,6 +129,11 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
     }
 
     private void reloadListView() {
+        if (this.coworkerList == null || this.coworkerList.size() <= 0) {
+            View view = findViewById(android.R.id.content);
+            Tools.showInfoMessage(view, "There are no coworkers yet.");
+        }
+
         this.adapter = new CoworkersListAdapter(this, R.layout.list_item_coworkers, this.coworkerList);
         this.listView.setAdapter(this.adapter);
         registerForContextMenu(this.listView);
