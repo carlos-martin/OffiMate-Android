@@ -27,9 +27,10 @@
             android:name=".activities.main.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.coworkers.CoworkersActivity" />
+        <activity android:name=".activities.coworkers.CoworkerListActivity" />
         <activity android:name=".activities.coworkers.CoworkerProfileActivity" />
-        <activity android:name=".activities.coworkers.BoostCardsActivity"></activity>
+        <activity android:name=".activities.coworkers.SendBoostCard1Activity" />
+        <activity android:name=".activities.coworkers.SendBoostCard2Activity"></activity>
     </application>
 
 </manifest>

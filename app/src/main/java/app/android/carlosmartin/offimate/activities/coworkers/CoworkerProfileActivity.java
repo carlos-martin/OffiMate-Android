@@ -70,7 +70,7 @@ public class CoworkerProfileActivity extends AppCompatActivity implements ListVi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(CoworkerProfileActivity.this, BoostCardsActivity.class);
+        Intent intent = new Intent(CoworkerProfileActivity.this, SendBoostCard1Activity.class);
         intent.putExtra("coworker", this.coworker);
         startActivity(intent);
     }

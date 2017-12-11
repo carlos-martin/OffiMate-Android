@@ -10,7 +10,7 @@ import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.adapters.coworkers.BoostCardsListAdapter;
 import app.android.carlosmartin.offimate.models.Coworker;
 
-public class BoostCardsActivity extends AppCompatActivity implements ListView.OnItemClickListener {
+public class SendBoostCard1Activity extends AppCompatActivity implements ListView.OnItemClickListener {
 
     //UI
     private ListView listView;
@@ -22,7 +22,7 @@ public class BoostCardsActivity extends AppCompatActivity implements ListView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_boost_cards);
+        setContentView(R.layout.activity_send_boost_card1);
 
         this.initUIData();
     }

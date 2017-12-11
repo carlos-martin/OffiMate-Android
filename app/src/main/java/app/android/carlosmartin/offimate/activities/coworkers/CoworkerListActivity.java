@@ -29,7 +29,7 @@ import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Coworker;
 import app.android.carlosmartin.offimate.models.Office;
 
-public class CoworkersActivity extends AppCompatActivity implements ListView.OnItemClickListener {
+public class CoworkerListActivity extends AppCompatActivity implements ListView.OnItemClickListener {
 
     //Firebase
     private FirebaseDatabase database;
@@ -50,7 +50,7 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_coworkers);
+        setContentView(R.layout.activity_coworker_list);
         this.initFirebase();
         this.initUI();
         this.observerCoworker();
@@ -98,7 +98,7 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
                             stopLoadingView();
-                            Toast.makeText(CoworkersActivity.this, "Firebase Office failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CoworkerListActivity.this, "Firebase Office failed.", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -229,7 +229,7 @@ public class CoworkersActivity extends AppCompatActivity implements ListView.OnI
     //MARK: - Navigation
 
     private void goToCoworkerProfileActivity() {
-        Intent intent = new Intent(CoworkersActivity.this, CoworkerProfileActivity.class);
+        Intent intent = new Intent(CoworkerListActivity.this, CoworkerProfileActivity.class);
         intent.putExtra("coworker", this.selectedCoworker);
         startActivity(intent);
     }

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import app.android.carlosmartin.offimate.R;
-import app.android.carlosmartin.offimate.activities.coworkers.CoworkersActivity;
+import app.android.carlosmartin.offimate.activities.coworkers.CoworkerListActivity;
 import app.android.carlosmartin.offimate.activities.onboard.OnBoardActivity;
 import app.android.carlosmartin.offimate.adapters.main.ChannelsListAdapter;
 import app.android.carlosmartin.offimate.application.OffiMate;
@@ -264,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void goToCoworkersActivity() {
-        Intent intent = new Intent(MainActivity.this, CoworkersActivity.class);
+        Intent intent = new Intent(MainActivity.this, CoworkerListActivity.class);
         startActivity(intent);
     }
 
