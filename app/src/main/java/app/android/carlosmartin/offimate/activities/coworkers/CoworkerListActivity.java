@@ -149,9 +149,8 @@ public class CoworkerListActivity extends AppCompatActivity implements ListView.
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                View view = findViewById(R.id.actionButton);
                 String message = "Firebase error.";
-                Tools.showInfoMessage(view, message);
+                Tools.showInfoMessage(listView, message);
             }
         };
 

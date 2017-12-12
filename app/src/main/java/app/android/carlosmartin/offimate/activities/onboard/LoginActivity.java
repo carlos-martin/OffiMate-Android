@@ -263,15 +263,15 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.action_bar_menu_done, menu);
-        this.barMenuButton = menu.findItem(R.id.done_bar_button_item);
+        menuInflater.inflate(R.menu.action_bar_menu_login, menu);
+        this.barMenuButton = menu.findItem(R.id.login_bar_button_item);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.done_bar_button_item:
+            case R.id.login_bar_button_item:
                 this.loginAction();
                 return true;
             default:

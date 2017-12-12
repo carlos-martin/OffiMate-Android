@@ -10,22 +10,21 @@
         android:id="@+id/boostCardMessageHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/passion" >
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
             <ImageView
-                android:id="@+id/coworkerProfileImageView"
+                android:id="@+id/boostCardImageView"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
-                android:layout_marginLeft="18dp"
-                android:layout_marginRight="18dp"
-                android:background="@color/passion"
-                app:srcCompat="@drawable/ic_action_passion" />
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -37,15 +36,19 @@
                 android:layout_gravity="center_vertical"
                 android:orientation="vertical">
                 <TextView
-                    android:id="@+id/coworkerProfileNameTextView"
+                    android:id="@+id/boostCardTitleTextView"
                     android:text="Manages ambiguity"
                     android:textStyle="bold"
+                    android:textSize="18dp"
+                    android:textColor="#FFFFFF"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"/>
                 <TextView
-                    android:id="@+id/coworkerProfileEmailTextView"
+                    android:id="@+id/boostCardReceiverTextView"
                     android:text="to: Daniel Martin"
+                    android:textSize="18dp"
+                    android:textColor="#FFFFFF"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical" />
@@ -63,7 +66,6 @@
 
         <EditText
             android:id="@+id/boostCardEditText"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed suscipit ligula in ornare rhoncus. Aenean dignissim, sapien in sagittis consequat, lectus lacus laoreet neque, eget sollicitudin ipsum mauris id mi. Integer tincidunt neque leo, fermentum interdum turpis dapibus ultricies. Integer pharetra tortor vel fringilla ultrices."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
