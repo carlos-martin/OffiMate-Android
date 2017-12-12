@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import app.android.carlosmartin.offimate.R;
+import app.android.carlosmartin.offimate.activities.LoadingActivity;
 import app.android.carlosmartin.offimate.activities.coworkers.CoworkerListActivity;
 import app.android.carlosmartin.offimate.activities.onboard.OnBoardActivity;
 import app.android.carlosmartin.offimate.adapters.main.ChannelsListAdapter;
@@ -323,9 +324,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        Intent intent = new Intent(MainActivity.this, OnBoardActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        OffiMate.currentUser = null;
+        OffiMate.firebaseUser = null;
+        this.goToLoadingActivity();
     }
 
     //MARK: - List view function
@@ -360,5 +361,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void goToBoostCardSend() {
         //TODO: complete to go to Sent Boost Card Activity
         //Toast.makeText(MainActivity.this, "TO SENT ACTIVITY", Toast.LENGTH_SHORT).show();
+    }
+
+    private void goToLoadingActivity() {
+        Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }
