@@ -13,14 +13,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Date;
+
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.main.MainActivity;
+import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
+import app.android.carlosmartin.offimate.models.BoostCard;
 import app.android.carlosmartin.offimate.models.BoostCardType;
 import app.android.carlosmartin.offimate.models.Coworker;
 import app.android.carlosmartin.offimate.models.NewDate;
 
 public class SendBoostCard2Activity extends AppCompatActivity {
+
+    //Firebase
+    private FirebaseDatabase database;
+    private DatabaseReference boostCardRef;
 
     //UI
     private View      headerView;
@@ -35,6 +46,7 @@ public class SendBoostCard2Activity extends AppCompatActivity {
     private String header;
     private String message;
     private NewDate date;
+    private BoostCard boostCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +54,12 @@ public class SendBoostCard2Activity extends AppCompatActivity {
         setContentView(R.layout.activity_send_boost_card2);
         this.initData();
         this.initUI();
+        this.initFirebase();
+    }
+
+    private void initFirebase() {
+        this.database = FirebaseDatabase.getInstance();
+        this.boostCardRef = this.database.getReference("boostcard").push();
     }
 
     private void initData() {
@@ -103,10 +121,21 @@ public class SendBoostCard2Activity extends AppCompatActivity {
             Tools.showInfoMessage(this.messageEditText, message);
         } else {
             //TODO: create and store the BoostCard at firebase
+
+            this.date = new NewDate(new Date());
+
+            this.createBoostCard();
+
             Toast.makeText(SendBoostCard2Activity.this,
                     "Boost Card sent properly", Toast.LENGTH_LONG).show();
             this.goToMainActivity();
         }
+    }
+
+    private void createBoostCard() {
+        this.boostCard = new BoostCard("", OffiMate.currentUser.getUid(),
+                this.coworker.uid, this.type, this.header, this.message, this.date);
+        this.boostCardRef.setValue(this.boostCard.toMap());
     }
 
     private void goToMainActivity() {

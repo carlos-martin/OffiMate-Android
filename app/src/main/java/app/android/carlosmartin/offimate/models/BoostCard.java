@@ -2,6 +2,9 @@ package app.android.carlosmartin.offimate.models;
 
 import android.support.annotation.NonNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BoostCard implements Comparable<BoostCard> {
     public final String id;
     public final String senderId;
@@ -21,6 +24,26 @@ public class BoostCard implements Comparable<BoostCard> {
         this.date = date;
     }
 
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+
+        String stype;
+        if (this.type == BoostCardType.EXECUTION) {
+            stype = "execution";
+        } else {
+            stype = "passion";
+        }
+        result.put("date", this.date.id);
+        result.put("header", this.header);
+        result.put("message", this.message);
+        result.put("receiverId", this.receiverId);
+        result.put("senderId", this.senderId);
+        result.put("type", stype);
+        result.put("unread", true);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "BoostCard:\n" +
                 "├── date:        " + this.date + "\n" +
