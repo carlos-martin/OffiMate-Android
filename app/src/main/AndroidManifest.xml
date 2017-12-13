@@ -30,7 +30,8 @@
         <activity android:name=".activities.coworkers.CoworkerListActivity" />
         <activity android:name=".activities.coworkers.CoworkerProfileActivity" />
         <activity android:name=".activities.coworkers.SendBoostCard1Activity" />
-        <activity android:name=".activities.coworkers.SendBoostCard2Activity"></activity>
+        <activity android:name=".activities.coworkers.SendBoostCard2Activity" />
+        <activity android:name=".activities.main.ChannelActivity"></activity>
     </application>
 
 </manifest>

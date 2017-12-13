@@ -2,21 +2,63 @@ package app.android.carlosmartin.offimate.models;
 
 import android.support.annotation.NonNull;
 
+import com.stfalcon.chatkit.commons.models.IMessage;
+import com.stfalcon.chatkit.commons.models.IUser;
+
+import java.util.Date;
+
 /**
  * Created by carlos.martin on 17/11/2017.
  */
 
-public class Message implements Comparable<Message> {
+public class Message implements Comparable<Message>, IMessage {
     public final String id;
     public final String senderId;
+    public final String name;
     public final String text;
-    public final int date;
+    public final long date;
 
-    public Message(String id, String senderId, String text, int date) {
+    public Message(String id, String senderId, String name, String text, long date) {
         this.id = id;
         this.senderId = senderId;
+        this.name = name;
         this.text = text;
         this.date = date;
+    }
+
+    @Override
+    public String getId() {
+        return this.id;
+    }
+
+    @Override
+    public String getText() {
+        return this.text;
+    }
+
+    @Override
+    public IUser getUser() {
+        return new IUser() {
+            @Override
+            public String getId() {
+                return senderId;
+            }
+
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getAvatar() {
+                return null;
+            }
+        };
+    }
+
+    @Override
+    public Date getCreatedAt() {
+        return (new NewDate(date)).date;
     }
 
     @Override
@@ -30,7 +72,7 @@ public class Message implements Comparable<Message> {
 
     @Override
     public int compareTo(@NonNull Message message) {
-        return this.date - message.date;
+        return (int)(this.date - message.date);
     }
 
     @Override

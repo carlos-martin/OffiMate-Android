@@ -2,13 +2,16 @@ package app.android.carlosmartin.offimate.models;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by carlos.martin on 17/11/2017.
  */
 
-public class Channel implements Comparable<Channel> {
+public class Channel implements Comparable<Channel>, Serializable {
     public final String id;
     public final String name;
     public final String creator;
@@ -24,6 +27,16 @@ public class Channel implements Comparable<Channel> {
     public Channel(String id, String name, String creator, ArrayList<Message> message) {
         this(id, name, creator);
         this.message = message;
+    }
+
+    public void addMessage(Message message) {
+        this.message.add(message);
+        Collections.sort(this.message, new Comparator<Message>() {
+            @Override
+            public int compare(Message message1, Message message2) {
+                return message1.compareTo(message2);
+            }
+        });
     }
 
     @Override

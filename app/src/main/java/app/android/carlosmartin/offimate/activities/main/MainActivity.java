@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -264,11 +265,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void goToCoworkersActivity() {
-        Intent intent = new Intent(MainActivity.this, CoworkerListActivity.class);
-        startActivity(intent);
-    }
-
     //MARK: - Left Side Menu
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -326,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         OffiMate.currentUser = null;
         OffiMate.firebaseUser = null;
-        this.goToLoadingActivity();
+        goToLoadingActivity();
     }
 
     //MARK: - List view function
@@ -334,19 +330,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //TODO: complete to go to selected channel activity.
-    }
+        this.goToChannelActivity(this.channelList.get(position));
 
-    //MARK: - Loading View
-
-    private void startLoadingView () {
-        findViewById(R.id.mainLoadingPanel).setVisibility(View.VISIBLE);
-    }
-
-    private void stopLoadingView() {
-        findViewById(R.id.mainLoadingPanel).setVisibility(View.GONE);
     }
 
     //MARK: - Navigation
+
+    private void goToChannelActivity(Channel channel) {
+        Intent intent = new Intent(MainActivity.this, ChannelActivity.class);
+        intent.putExtra("channel", channel);
+        startActivity(intent);
+    }
+
+    private void goToCoworkersActivity() {
+        Intent intent = new Intent(MainActivity.this, CoworkerListActivity.class);
+        startActivity(intent);
+    }
+
+    private void goToLoadingActivity() {
+        Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
 
     private void goToSelectionOffice() {
         //TODO: complete to go to selection office activity
@@ -363,9 +368,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Toast.makeText(MainActivity.this, "TO SENT ACTIVITY", Toast.LENGTH_SHORT).show();
     }
 
-    private void goToLoadingActivity() {
-        Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+    //MARK: - Loading View
+
+    private void startLoadingView() {
+        findViewById(R.id.mainLoadingPanel).setVisibility(View.VISIBLE);
+    }
+
+    private void stopLoadingView() {
+        findViewById(R.id.mainLoadingPanel).setVisibility(View.GONE);
     }
 }
