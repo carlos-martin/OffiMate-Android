@@ -57,13 +57,29 @@ public class NewDate implements Comparable<NewDate>, Serializable {
         this.seconds = (int) l_seconds;
 
         Calendar calendar = new GregorianCalendar();
-        calendar.set(this.year, this.month, this.day, this.hour, this.minutes, this.seconds);
+        calendar.set(this.year, this.month-1, this.day, this.hour, this.minutes, this.seconds);
         this.date = calendar.getTime();
     }
 
     @Override
-    public String toString() {
-        return this.date.toString();
+    public String toString()  {
+        String toString;
+        NewDate current = new NewDate(new Date());
+
+        if (this.equals(current)) {
+            toString = "Now";
+        } else if (this.year == current.year && this.month == current.month && this.day == current.day) {
+            String minToString = (this.minutes > 9 ? ((Integer) this.minutes).toString() : "0" + ((Integer) this.minutes).toString());
+            toString = ((Integer) this.hour).toString() + ":" + minToString;
+        } else if (this.year == current.year && this.month == current.month && (current.day - this.day == 1)) {
+            toString = "Yesterday";
+        } else if (this.year == current.year && this.month == current.month && (current.day - this.day < 7)) {
+            toString = this.getDayName();
+        } else {
+            toString = ((Integer) this.day).toString() + "/" + ((Integer) this.month).toString() + "/ " + ((Integer) this.year).toString();
+        }
+
+        return toString;
     }
 
     @Override
@@ -78,6 +94,81 @@ public class NewDate implements Comparable<NewDate>, Serializable {
         } else {
             final NewDate newDate = (NewDate) obj;
             return this.id == newDate.id;
+        }
+    }
+
+    public String getChannelFormat() {
+        String toString;
+        NewDate current = new NewDate(new Date());
+
+        if (this.equals(current)) {
+            toString = "Now";
+        } else if (this.year == current.year && this.month == current.month && this.day == current.day) {
+            toString = "Today";
+        } else if (this.year == current.year && this.month == current.month && (current.day - this.day == 1)) {
+            toString = "Yesterday";
+        } else if (this.year == current.year && this.month == current.month && (current.day - this.day < 7)) {
+            toString = this.getDayName();
+        } else {
+            toString = getMonthName() + " " + ((Integer) this.day).toString() + ", " + ((Integer) this.year).toString();
+        }
+
+        return toString;
+    }
+
+    public String getDayName() {
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(this.date);
+        switch (calendar.get(Calendar.DAY_OF_WEEK)) {
+            case Calendar.MONDAY:
+                return "Monday";
+            case Calendar.TUESDAY:
+                return "Tuesday";
+            case Calendar.WEDNESDAY:
+                return "Wednesday";
+            case Calendar.THURSDAY:
+                return "Thursday";
+            case Calendar.FRIDAY:
+                return "Friday";
+            case Calendar.SATURDAY:
+                return "Saturday";
+            case Calendar.SUNDAY:
+                return "Sunday";
+            default:
+                return "";
+        }
+    }
+
+    public String getMonthName() {
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(this.date);
+        switch (calendar.get(Calendar.MONTH)) {
+            case Calendar.JANUARY:
+                return "January";
+            case Calendar.FEBRUARY:
+                return "February";
+            case Calendar.MARCH:
+                return "March";
+            case Calendar.APRIL:
+                return "April";
+            case Calendar.MAY:
+                return "May";
+            case Calendar.JUNE:
+                return "June";
+            case Calendar.JULY:
+                return "July";
+            case Calendar.AUGUST:
+                return "August";
+            case Calendar.SEPTEMBER:
+                return "September";
+            case Calendar.OCTOBER:
+                return "October";
+            case Calendar.NOVEMBER:
+                return "November";
+            case Calendar.DECEMBER:
+                return "December";
+            default:
+                return "";
         }
     }
 }

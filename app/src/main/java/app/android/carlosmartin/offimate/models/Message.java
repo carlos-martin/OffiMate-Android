@@ -6,6 +6,8 @@ import com.stfalcon.chatkit.commons.models.IMessage;
 import com.stfalcon.chatkit.commons.models.IUser;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by carlos.martin on 17/11/2017.
@@ -24,6 +26,14 @@ public class Message implements Comparable<Message>, IMessage {
         this.name = name;
         this.text = text;
         this.date = date;
+    }
+
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("date", this.date);
+        result.put("text", this.text);
+        result.put("uid", this.senderId);
+        return result;
     }
 
     @Override

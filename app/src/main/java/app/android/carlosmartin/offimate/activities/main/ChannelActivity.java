@@ -2,7 +2,6 @@ package app.android.carlosmartin.offimate.activities.main;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -10,22 +9,28 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.stfalcon.chatkit.messages.MessageInput;
 import com.stfalcon.chatkit.messages.MessagesList;
 import com.stfalcon.chatkit.messages.MessagesListAdapter;
+import com.stfalcon.chatkit.utils.DateFormatter;
 
+import java.util.Date;
 import java.util.Map;
 
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.models.Channel;
+import app.android.carlosmartin.offimate.adapters.main.CustomIncomingMessageViewHolder;
 import app.android.carlosmartin.offimate.models.Message;
+import app.android.carlosmartin.offimate.models.NewDate;
 import app.android.carlosmartin.offimate.user.CurrentUser;
 
-public class ChannelActivity extends AppCompatActivity {
+public class ChannelActivity extends AppCompatActivity implements DateFormatter.Formatter {
 
     //UI
     MessagesList messagesList;
     MessagesListAdapter<Message> adapter;
+    MessageInput inputView;
 
     //Firebase
     private FirebaseDatabase database;
@@ -62,8 +67,20 @@ public class ChannelActivity extends AppCompatActivity {
 
     private void initUI() {
         setTitle(this.channel.name);
+        this.inputView = (MessageInput) findViewById(R.id.input);
+        inputView.setInputListener(new MessageInput.InputListener() {
+            @Override
+            public boolean onSubmit(CharSequence input) {
+                sendMessage(input.toString());
+                return true;
+            }
+        });
+
         this.messagesList = (MessagesList) findViewById(R.id.messagesList);
-        this.adapter = new MessagesListAdapter<>(OffiMate.currentUser.getUid(), null);
+        MessagesListAdapter.HoldersConfig holdersConfig = new MessagesListAdapter.HoldersConfig();
+        holdersConfig.setIncoming(CustomIncomingMessageViewHolder.class, R.layout.item_incoming_text_message);
+        this.adapter = new MessagesListAdapter<>(OffiMate.currentUser.getUid(), holdersConfig, null);
+        this.adapter.setDateHeadersFormatter(this);
         this.messagesList.setAdapter(adapter);
     }
 
@@ -108,4 +125,19 @@ public class ChannelActivity extends AppCompatActivity {
         this.messageRef.addChildEventListener(childEventListener);
     }
 
+    @Override
+    public String format(Date date) {
+        return (new NewDate(date)).getChannelFormat();
+    }
+
+    private void sendMessage(String messageText) {
+        DatabaseReference newMessageRef = this.messageRef.push();
+        Message newMessage = new Message("",
+                OffiMate.currentUser.getUid(),
+                OffiMate.currentUser.getName(),
+                messageText,
+                (new NewDate(new Date())).id);
+        Map<String, Object> messageValue = newMessage.toMap();
+        newMessageRef.setValue(messageValue);
+    }
 }
