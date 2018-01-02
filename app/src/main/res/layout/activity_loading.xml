@@ -25,7 +25,16 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:indeterminate="true" />
+            android:indeterminate="true"
+            android:id="@+id/progressBar2" />
+
+        <TextView
+            android:id="@+id/loadingTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/progressBar2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"/>
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

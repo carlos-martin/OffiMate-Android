@@ -6,6 +6,9 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import app.android.carlosmartin.offimate.user.CurrentUser;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -21,6 +24,9 @@ public class OffiMate extends Application {
     public static CurrentUser currentUser;
     public static FirebaseUser firebaseUser;
     public static FirebaseAuth mAuth;
+
+    public static Map<String, Object> coworkers = new HashMap<>();
+    public static Map<String, Object> offices = new HashMap<>();
 
     /* Connexion with our local data base */
     public static Realm realm;
