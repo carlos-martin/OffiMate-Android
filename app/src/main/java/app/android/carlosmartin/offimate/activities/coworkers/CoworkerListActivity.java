@@ -28,6 +28,7 @@ import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Coworker;
 import app.android.carlosmartin.offimate.models.Office;
+import app.android.carlosmartin.offimate.user.CurrentUser;
 
 public class CoworkerListActivity extends AppCompatActivity implements ListView.OnItemClickListener {
 
@@ -70,37 +71,9 @@ public class CoworkerListActivity extends AppCompatActivity implements ListView.
                 final String name     = raw.get("name");
                 final String userId   = raw.get("userId");
                 final String officeId = raw.get("officeId");
-
+                final Office office   = (Office) OffiMate.offices.get(officeId);
                 if (!email.equals(OffiMate.currentUser.getEmail())) {
-                    officeRef.orderByKey().equalTo(officeId).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            stopLoadingView();
-                            Map<String, Object>       raw    = (Map<String, Object>) dataSnapshot.getValue();
-                            Map.Entry<String, Object> entry  = raw.entrySet().iterator().next();
-                            Map<String, String>       values = (Map<String, String>) entry.getValue();
-
-                            String officeName = values.get("name");
-                            Office office = new Office(officeId, officeName);
-
-                            coworkerList.add(new Coworker(id, userId, email, name, office));
-
-                            Collections.sort(coworkerList, new Comparator<Coworker>() {
-                                @Override
-                                public int compare(Coworker o1, Coworker o2) {
-                                    return o1.name.compareTo(o2.name);
-                                }
-                            });
-                            stopLoadingView();
-                            reloadListView();
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            stopLoadingView();
-                            Toast.makeText(CoworkerListActivity.this, "Firebase Office failed.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    addCoworker(new Coworker(id, userId, email, name, office));
                 }
             }
 
@@ -151,6 +124,21 @@ public class CoworkerListActivity extends AppCompatActivity implements ListView.
             public void onCancelled(DatabaseError databaseError) {
                 String message = "Firebase error.";
                 Tools.showInfoMessage(listView, message);
+            }
+
+            public void addCoworker(Coworker coworker) {
+                //Update coworker
+                OffiMate.coworkers.put(coworker.uid, coworker);
+
+                coworkerList.add(coworker);
+                Collections.sort(coworkerList, new Comparator<Coworker>() {
+                    @Override
+                    public int compare(Coworker o1, Coworker o2) {
+                        return o1.name.compareTo(o2.name);
+                    }
+                });
+                stopLoadingView();
+                reloadListView();
             }
         };
 
