@@ -19,8 +19,10 @@ import java.util.Map;
 
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.application.OffiMate;
+import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Channel;
 import app.android.carlosmartin.offimate.adapters.main.CustomIncomingMessageViewHolder;
+import app.android.carlosmartin.offimate.models.Coworker;
 import app.android.carlosmartin.offimate.models.Message;
 import app.android.carlosmartin.offimate.models.NewDate;
 import app.android.carlosmartin.offimate.user.CurrentUser;
@@ -89,25 +91,31 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
-                final String id = dataSnapshot.getKey();
-                final String senderId = (String) raw.get("uid");
-                final String text     = (String) raw.get("text");
-                final long   date     = (long)   raw.get("date");
-                coworkerRef.orderByChild("userId").equalTo(senderId).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
-                        Map.Entry<String, Object> entry = raw.entrySet().iterator().next();
-                        Map<String, String> values = (Map<String, String>) entry.getValue();
-                        String name = values.get("name");
-                        Message message = new Message(id, senderId, name, text, date);
-                        channel.addMessage(message);
-                        adapter.addToStart(message, true);
-                    }
+                final String   id       = dataSnapshot.getKey();
+                final String   senderId = (String)   raw.get("uid");
+                final String   text     = (String)   raw.get("text");
+                final long     date     = (long)     raw.get("date");
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) { /*TODO: handler error*/ }
-                });
+                if (OffiMate.coworkers.get(senderId) == null) {
+                    coworkerRef.orderByChild("userId").equalTo(senderId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+                            Map.Entry<String, Object> entry = raw.entrySet().iterator().next();
+                            //Updating coworker
+                            Coworker coworker = Tools.rawToCoworker(entry);
+                            OffiMate.coworkers.put(coworker.id, coworker);
+                            //Adding message
+                            addMessage(new Message(id, senderId, coworker.name, text, date));
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) { /*TODO: handler error*/ }
+                    });
+                } else {
+                    Coworker coworker = (Coworker) OffiMate.coworkers.get(senderId);
+                    addMessage(new Message(id, senderId, coworker.name, text, date));
+                }
             }
 
             @Override
@@ -121,6 +129,11 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
 
             @Override
             public void onCancelled(DatabaseError databaseError) { /*TODO: Handle error*/ }
+
+            public void addMessage(Message message) {
+                channel.addMessage(message);
+                adapter.addToStart(message,true);
+            }
         };
         this.messageRef.addChildEventListener(childEventListener);
     }

@@ -128,7 +128,7 @@ public class LoadingActivity extends AppCompatActivity {
                         Map<String, Object> rawMap = (Map<String, Object>) dataSnapshot.getValue();
                         for (Map.Entry<String, Object> rawEntry : rawMap.entrySet()) {
                             Coworker coworker = Tools.rawToCoworker(rawEntry);
-                            OffiMate.coworkers.put(coworker.id, coworker);
+                            OffiMate.coworkers.put(coworker.uid, coworker);
                         }
 
                         goToMainActivity();
