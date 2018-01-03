@@ -21,6 +21,8 @@ import java.util.Map;
 
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.adapters.onboard.SignUpOfficesListAdapter;
+import app.android.carlosmartin.offimate.application.OffiMate;
+import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Office;
 
 public class SignUpOfficesActivity extends AppCompatActivity implements ListView.OnItemClickListener {
@@ -46,9 +48,7 @@ public class SignUpOfficesActivity extends AppCompatActivity implements ListView
         setContentView(R.layout.activity_sign_up_offices);
 
         this.initFirebase();
-
         this.initUI();
-
         this.observerOffice();
     }
 
@@ -90,18 +90,11 @@ public class SignUpOfficesActivity extends AppCompatActivity implements ListView
         this.officeRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
-
-                String id;
-                String name = "";
-
-                for (Map.Entry<String, Object> item : raw.entrySet()) {
-                    id = item.getKey();
-                    Map<String, String> rawName = (Map<String, String>) item.getValue();
-                    for (Map.Entry<String, String> itemName : rawName.entrySet()) {
-                        name = itemName.getValue();
-                    }
-                    officeList.add(new Office(id, name));
+                Map<String, Object> rawMap = (Map<String, Object>) dataSnapshot.getValue();
+                for (Map.Entry<String, Object> rawEntry : rawMap.entrySet()) {
+                    Office office = Tools.rawToOffice(rawEntry);
+                    OffiMate.offices.put(office.id, office);
+                    officeList.add(office);
                 }
                 reloadListView();
                 stopLoadingView();
@@ -114,7 +107,6 @@ public class SignUpOfficesActivity extends AppCompatActivity implements ListView
                         "Firebase error", Toast.LENGTH_LONG).show();
             }
         });
-
     }
 
     //MARK: - Navigation

@@ -47,7 +47,7 @@ public class LoadingActivity extends AppCompatActivity {
     }
 
     private void validationProcess() {
-        this.updateLabel("Signing in...");
+        this.updateLabel("Validating data...");
 
         if (OffiMate.currentUser == null && OffiMate.firebaseUser == null) {
             goToOnBoardActivity();
