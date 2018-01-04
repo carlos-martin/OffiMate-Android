@@ -71,6 +71,7 @@ public class LoadingActivity extends AppCompatActivity {
 
     //MARK:- Navigation Function
     private void goToOnBoardActivity() {
+        /*
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -80,10 +81,17 @@ public class LoadingActivity extends AppCompatActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
-        }, 2000);
+        }, 500);
+        */
+
+        stopLoading();
+        intent = new Intent(LoadingActivity.this, OnBoardActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private void goToMainActivity() {
+        /*
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -93,7 +101,13 @@ public class LoadingActivity extends AppCompatActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
-        }, 2000);
+        }, 500);
+        */
+
+        stopLoading();
+        intent = new Intent(LoadingActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     //MARK:- UI Function
