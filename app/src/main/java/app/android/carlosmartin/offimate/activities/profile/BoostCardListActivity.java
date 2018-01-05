@@ -123,7 +123,7 @@ public class BoostCardListActivity extends AppCompatActivity implements ListView
             Tools.showInfoMessage(view, "You don't have any boost card yet.");
         }
 
-        this.adapter = new BoostCardListAdapter(this, R.layout.list_item_boost_card, this.boostCardList, BoostCardActivityType.INBOX);
+        this.adapter = new BoostCardListAdapter(this, R.layout.list_item_boost_card, this.boostCardList, this.activityType);
         this.listView.setAdapter(this.adapter);
         registerForContextMenu(listView);
     }
