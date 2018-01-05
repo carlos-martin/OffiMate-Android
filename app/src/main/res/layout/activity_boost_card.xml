@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="app.android.carlosmartin.offimate.activities.profile.BoostCardActivity">
+
+    <LinearLayout
+        android:id="@+id/deepBCHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/passion" >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/deepBCImageView"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/deepBCTypeTextView"
+                    android:text="Passion"
+                    android:textStyle="bold"
+                    android:textSize="18dp"
+                    android:textColor="#FFFFFF"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"/>
+                <TextView
+                    android:id="@+id/deepBCNameTextView"
+                    android:text="from: Daniel Martin"
+                    android:textSize="18dp"
+                    android:textColor="#FFFFFF"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/deepBCTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/deepBCHeader"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+        <TextView
+            android:id="@+id/deepBCTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:minLines="1"
+            android:maxLines="1"
+            android:text="Ensures accountability"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/deepBCDateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:minLines="1"
+            android:maxLines="1"
+            android:text="October 2, 2017 - 14:03"
+            android:ellipsize="end"
+            android:layout_below="@+id/deepBCTitleTextView"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="2dp"
+            android:background="@android:color/darker_gray"
+            android:layout_below="@+id/deepBCDateTextView"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/deepBCTitle"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+
+        <TextView
+            android:id="@+id/deepBCBodyTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet purus odio. Aenean eget eros id sapien interdum elementum. Etiam at consectetur neque, vitae suscipit enim. Praesent finibus nulla eu tortor faucibus, vel sodales sapien dignissim. Curabitur vitae magna malesuada, cursus lectus vitae, dapibus metus. Donec scelerisque commodo dui eu accumsan. Integer et nunc eleifend, aliquet ipsum vel, luctus quam. Nam ut elit odio. Suspendisse in tincidunt lorem. Donec tincidunt urna sed commodo feugiat. Etiam vitae aliquam nunc. Proin suscipit lectus mi, eu consequat tortor condimentum id. Curabitur ut dignissim magna."
+            android:textColor="@color/black"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

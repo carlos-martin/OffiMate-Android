@@ -2,10 +2,11 @@ package app.android.carlosmartin.offimate.models;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BoostCard implements Comparable<BoostCard> {
+public class BoostCard implements Comparable<BoostCard>, Serializable {
     public final String id;
     public final String senderId;
     public final String receiverId;

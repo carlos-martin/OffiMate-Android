@@ -1,5 +1,6 @@
 package app.android.carlosmartin.offimate.activities.profile;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -160,7 +162,11 @@ public class BoostCardListActivity extends AppCompatActivity implements ListView
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        this.selectedBoostCard = this.boostCardList.get(position);
+        Intent intent = new Intent(BoostCardListActivity.this, BoostCardActivity.class);
+        intent.putExtra("boostcard", this.selectedBoostCard);
+        intent.putExtra("type",      this.activityType);
+        startActivity(intent);
     }
 
     //MARK: - Loading View
