@@ -19,12 +19,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import app.android.carlosmartin.offimate.R;
-import app.android.carlosmartin.offimate.adapters.profile.InboxListAdapter;
+import app.android.carlosmartin.offimate.adapters.profile.BoostCardActivityType;
+import app.android.carlosmartin.offimate.adapters.profile.BoostCardListAdapter;
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.BoostCard;
 
-public class BoostCardInboxActivity extends AppCompatActivity implements ListView.OnItemClickListener {
+public class BoostCardListActivity extends AppCompatActivity implements ListView.OnItemClickListener {
 
     //Firebase
     private FirebaseDatabase database;
@@ -32,17 +33,19 @@ public class BoostCardInboxActivity extends AppCompatActivity implements ListVie
 
     //UI
     private ListView listView;
-    private InboxListAdapter adapter;
+    private BoostCardListAdapter adapter;
 
     //DataSource
+    private BoostCardActivityType activityType;
     private List<BoostCard> boostCardList = new ArrayList<>();
     private BoostCard selectedBoostCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_boost_card_inbox);
+        setContentView(R.layout.activity_boost_card_list);
         this.initFirebase();
+        this.fetchBundle();
         this.initUI();
         this.observerBoostCard();
     }
@@ -50,6 +53,7 @@ public class BoostCardInboxActivity extends AppCompatActivity implements ListVie
     private void observerBoostCard() {
         this.startLoadingView();
         final String uid = OffiMate.currentUser.getUid();
+        String type = (this.activityType == BoostCardActivityType.INBOX ? "receiverId" : "senderId");
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
@@ -89,7 +93,7 @@ public class BoostCardInboxActivity extends AppCompatActivity implements ListVie
             }
         };
 
-        this.boostCardRef.orderByChild("receiverId").equalTo(uid)
+        this.boostCardRef.orderByChild(type).equalTo(uid)
                 .addChildEventListener(childEventListener);
 
         ValueEventListener valueEventListener = new ValueEventListener() {
@@ -108,7 +112,7 @@ public class BoostCardInboxActivity extends AppCompatActivity implements ListVie
             }
         };
 
-        this.boostCardRef.orderByChild("receiverId").equalTo(uid)
+        this.boostCardRef.orderByChild(type).equalTo(uid)
                 .addValueEventListener(valueEventListener);
     }
 
@@ -119,13 +123,27 @@ public class BoostCardInboxActivity extends AppCompatActivity implements ListVie
             Tools.showInfoMessage(view, "You don't have any boost card yet.");
         }
 
-        this.adapter = new InboxListAdapter(this, R.layout.list_item_boost_card, this.boostCardList);
+        this.adapter = new BoostCardListAdapter(this, R.layout.list_item_boost_card, this.boostCardList, BoostCardActivityType.INBOX);
         this.listView.setAdapter(this.adapter);
         registerForContextMenu(listView);
     }
 
+    private void fetchBundle() {
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            this.activityType = (BoostCardActivityType) bundle.get("activityType");
+        }
+    }
+
     private void initUI() {
-        setTitle("Inbox");
+        switch (this.activityType) {
+            case INBOX:
+                setTitle("Inbox");
+                break;
+            default:
+                setTitle("Sent");
+                break;
+        }
 
         this.stopLoadingView();
 

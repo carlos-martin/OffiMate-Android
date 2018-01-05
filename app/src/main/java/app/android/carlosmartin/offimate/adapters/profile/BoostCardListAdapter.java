@@ -12,23 +12,21 @@ import java.util.List;
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.models.BoostCard;
+import app.android.carlosmartin.offimate.models.BoostCardType;
 import app.android.carlosmartin.offimate.models.Coworker;
-import app.android.carlosmartin.offimate.models.NewDate;
 
-/**
- * Created by carlos.martin on 04/01/2018.
- */
-
-public class InboxListAdapter extends BaseAdapter {
+public class BoostCardListAdapter extends BaseAdapter {
 
     private int layout;
     private Context context;
     private List<BoostCard> boostCardList;
+    private BoostCardActivityType activityType;
 
-    public InboxListAdapter(Context context, int layout, List<BoostCard> boostCardList) {
+    public BoostCardListAdapter(Context context, int layout, List<BoostCard> boostCardList, BoostCardActivityType activityType) {
         this.layout = layout;
         this.context = context;
         this.boostCardList = boostCardList;
+        this.activityType = activityType;
     }
 
     @Override
@@ -65,20 +63,31 @@ public class InboxListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        String senderName;
         BoostCard boostCard = this.boostCardList.get(position);
-        if (OffiMate.coworkers.get(boostCard.senderId) != null) {
-            Coworker sender = (Coworker) OffiMate.coworkers.get(boostCard.senderId);
-            senderName = sender.name;
-        } else {
-            senderName = "Unknown Coworker";
+        String displayName;
+        switch (this.activityType) {
+            case INBOX:
+                if (OffiMate.coworkers.get(boostCard.senderId) != null) {
+                    displayName = ((Coworker) OffiMate.coworkers.get(boostCard.senderId)).name;
+                } else {
+                    displayName = "Unknown Coworker";
+                }
+                //TODO: if the boostCard is unread, put header and body in bold style
+                break;
+            default:
+                if (OffiMate.coworkers.get(boostCard.receiverId) != null) {
+                    displayName = ((Coworker) OffiMate.coworkers.get(boostCard.receiverId)).name;
+                } else {
+                    displayName = "Unknown Coworker";
+                }
+                break;
         }
 
-        holder.senderTextView.setText(senderName);
-        holder.creationDateTextView.setText(boostCard.date.getChannelFormat());
-        holder.boostCardHeaderTextView.setText(boostCard.header);
+        String header = (boostCard.type == BoostCardType.PASSION ? "passion: " : "execution: ") + boostCard.header;
+        holder.senderTextView.setText(displayName);
+        holder.creationDateTextView.setText(boostCard.date.toString());
+        holder.boostCardHeaderTextView.setText(header);
         holder.boostCardBodyTextView.setText(boostCard.message);
-        //TODO: if the boostCard is unread, put header and body in bold style
 
         return convertView;
     }

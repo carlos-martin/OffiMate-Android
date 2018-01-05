@@ -76,7 +76,7 @@ public class NewDate implements Comparable<NewDate>, Serializable {
         } else if (this.year == current.year && this.month == current.month && (current.day - this.day < 7)) {
             toString = this.getDayName();
         } else {
-            toString = ((Integer) this.day).toString() + "/" + ((Integer) this.month).toString() + "/ " + ((Integer) this.year).toString();
+            toString = ((Integer) this.day).toString() + "/" + ((Integer) this.month).toString() + "/" + ((Integer) this.year).toString();
         }
 
         return toString;

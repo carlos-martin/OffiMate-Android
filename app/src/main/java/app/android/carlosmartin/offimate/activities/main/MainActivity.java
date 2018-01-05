@@ -25,7 +25,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +32,9 @@ import java.util.Map;
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.LoadingActivity;
 import app.android.carlosmartin.offimate.activities.coworkers.CoworkerListActivity;
-import app.android.carlosmartin.offimate.activities.onboard.OnBoardActivity;
-import app.android.carlosmartin.offimate.activities.profile.BoostCardInboxActivity;
+import app.android.carlosmartin.offimate.activities.profile.BoostCardListActivity;
 import app.android.carlosmartin.offimate.adapters.main.ChannelsListAdapter;
+import app.android.carlosmartin.offimate.adapters.profile.BoostCardActivityType;
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Channel;
@@ -362,13 +361,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void goToBoostCardInbox() {
         //TODO: complete to go to Inbox Boost Card Activity
         //Toast.makeText(MainActivity.this, "TO INBOX ACTIVITY", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(MainActivity.this, BoostCardInboxActivity.class);
+        Intent intent = new Intent(MainActivity.this, BoostCardListActivity.class);
+        intent.putExtra("activityType", BoostCardActivityType.INBOX);
         startActivity(intent);
     }
 
     private void goToBoostCardSend() {
         //TODO: complete to go to Sent Boost Card Activity
         //Toast.makeText(MainActivity.this, "TO SENT ACTIVITY", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(MainActivity.this, BoostCardListActivity.class);
+        intent.putExtra("activityType", BoostCardActivityType.SENT);
+        startActivity(intent);
     }
 
     //MARK: - Loading View
