@@ -7,7 +7,7 @@
     tools:context="app.android.carlosmartin.offimate.activities.profile.BoostCardInboxActivity">
 
     <RelativeLayout
-        android:id="@+id/coworkersLoadingPanel"
+        android:id="@+id/inboxLoadingPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="8dp"

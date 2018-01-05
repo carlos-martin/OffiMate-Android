@@ -34,6 +34,7 @@ import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.LoadingActivity;
 import app.android.carlosmartin.offimate.activities.coworkers.CoworkerListActivity;
 import app.android.carlosmartin.offimate.activities.onboard.OnBoardActivity;
+import app.android.carlosmartin.offimate.activities.profile.BoostCardInboxActivity;
 import app.android.carlosmartin.offimate.adapters.main.ChannelsListAdapter;
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
@@ -361,6 +362,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void goToBoostCardInbox() {
         //TODO: complete to go to Inbox Boost Card Activity
         //Toast.makeText(MainActivity.this, "TO INBOX ACTIVITY", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(MainActivity.this, BoostCardInboxActivity.class);
+        startActivity(intent);
     }
 
     private void goToBoostCardSend() {

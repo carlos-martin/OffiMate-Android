@@ -6,12 +6,17 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 
+import com.google.firebase.database.DataSnapshot;
+
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import app.android.carlosmartin.offimate.application.OffiMate;
+import app.android.carlosmartin.offimate.models.BoostCard;
+import app.android.carlosmartin.offimate.models.BoostCardType;
 import app.android.carlosmartin.offimate.models.Coworker;
+import app.android.carlosmartin.offimate.models.NewDate;
 import app.android.carlosmartin.offimate.models.Office;
 
 /**
@@ -69,5 +74,20 @@ public class Tools {
         }
 
         return new Coworker(id, userId, email, name, office);
+    }
+
+    public static BoostCard dataSnapshotToBoostCard (DataSnapshot dataSnapshot) {
+        Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+        final String  id         = dataSnapshot.getKey();
+        final NewDate date       = new NewDate((long) raw.get("date"));
+        final String  header     = (String) raw.get("header");
+        final String  message    = (String) raw.get("message");
+        final String  receiverId = (String) raw.get("receiverId");
+        final String  senderId   = (String) raw.get("senderId");
+        final String  stype      = (String) raw.get("type");
+        final BoostCardType type = (stype.equals("execution") ? BoostCardType.EXECUTION : BoostCardType.PASSION);
+        final boolean unread     = (boolean) raw.get("unread");
+
+        return new BoostCard(id, senderId, receiverId, type, header, message, date);
     }
 }
