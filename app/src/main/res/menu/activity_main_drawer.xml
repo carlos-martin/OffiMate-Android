@@ -3,15 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:id="@+id/grp1" android:checkableBehavior="none">
+    <group android:id="@+id/grp1">
         <item
+            android:checkableBehavior="none"
             android:id="@+id/nav_office"
             android:icon="@drawable/ic_action_office"
             android:title="Office"/>
         <item
+            android:checkableBehavior="none"
             android:id="@+id/nav_password"
             android:icon="@drawable/ic_action_show"
             android:title="Password" />
+        <item
+            android:checkableBehavior="single"
+            android:id="@+id/nav_edit"
+            android:icon="@drawable/ic_action_edit"
+            android:title="Edit"/>
     </group>
 
     <group android:id="@+id/grp2" android:checkableBehavior="single">
@@ -29,7 +36,14 @@
         </item>
     </group>
 
-    <group android:id="@+id/grp3" android:checkableBehavior="single">
+    <group android:id="@+id/grp3" android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_new_office"
+            android:icon="@drawable/ic_action_new_office"
+            android:title="Create a new Office"/>
+    </group>
+
+    <group android:id="@+id/grp4" android:checkableBehavior="none">
         <item
             android:id="@+id/nav_log_out"
             android:icon="@drawable/ic_action_logout"

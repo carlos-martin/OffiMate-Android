@@ -34,6 +34,7 @@ import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.activities.LoadingActivity;
 import app.android.carlosmartin.offimate.activities.coworkers.CoworkerListActivity;
 import app.android.carlosmartin.offimate.activities.profile.BoostCardListActivity;
+import app.android.carlosmartin.offimate.activities.profile.EditProfileActivity;
 import app.android.carlosmartin.offimate.adapters.main.ChannelsListAdapter;
 import app.android.carlosmartin.offimate.adapters.profile.BoostCardActivityType;
 import app.android.carlosmartin.offimate.application.OffiMate;
@@ -279,18 +280,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
             case R.id.nav_office:
-                this.goToSelectionOffice();
                 return true;
             case R.id.nav_password:
                 this.changeViewPassword();
                 return true;
+            case R.id.nav_edit:
+                this.goToEditProfile();
+                //drawer.closeDrawer(GravityCompat.START);
+                return true;
             case R.id.nav_inbox:
                 this.goToBoostCardInbox();
-                drawer.closeDrawer(GravityCompat.START);
+                //drawer.closeDrawer(GravityCompat.START);
                 return true;
             case R.id.nav_send:
                 this.goToBoostCardSend();
-                drawer.closeDrawer(GravityCompat.START);
+                //drawer.closeDrawer(GravityCompat.START);
+                return true;
+            case R.id.nav_new_office:
+                this.goToNewOffice();
                 return true;
             case R.id.nav_log_out:
                 this.logOutAction();
@@ -301,6 +308,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
         }
     }
+
+
 
     private void changeViewPassword() {
         if (this.isPasswordHide) {
@@ -364,9 +373,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(intent);
     }
 
-    private void goToSelectionOffice() {
-        //TODO: complete to go to selection office activity
+    private void goToEditProfile() {
+        //TODO: complete to go to edit profile activity
         //Toast.makeText(MainActivity.this, "TO SELECTION OFFICE ACTIVITY", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(MainActivity.this, EditProfileActivity.class);
+        startActivity(intent);
     }
 
     private void goToBoostCardInbox() {
@@ -379,6 +390,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(MainActivity.this, BoostCardListActivity.class);
         intent.putExtra("activityType", BoostCardActivityType.SENT);
         startActivity(intent);
+    }
+
+    private void goToNewOffice() {
+        //TODO: complete to go to new office activity
     }
 
     //MARK: - Loading View

@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         this.textViewPassword = findViewById(R.id.textViewUserPassword);
         this.textViewPassword.setText("PASSWORD");
 
-        this.editTextEmail = findViewById(R.id.editTextUserEmail);
+        this.editTextEmail = findViewById(R.id.userNameEditText);
         this.editTextEmail.setHint("Enter your email...");
         this.editTextEmail.setOnKeyListener(new View.OnKeyListener() {
             @Override

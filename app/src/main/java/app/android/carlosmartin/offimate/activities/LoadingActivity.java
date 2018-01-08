@@ -71,19 +71,6 @@ public class LoadingActivity extends AppCompatActivity {
 
     //MARK:- Navigation Function
     private void goToOnBoardActivity() {
-        /*
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                stopLoading();
-                intent = new Intent(LoadingActivity.this, OnBoardActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            }
-        }, 500);
-        */
-
         stopLoading();
         intent = new Intent(LoadingActivity.this, OnBoardActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -91,19 +78,6 @@ public class LoadingActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity() {
-        /*
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                stopLoading();
-                intent = new Intent(LoadingActivity.this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            }
-        }, 500);
-        */
-
         stopLoading();
         intent = new Intent(LoadingActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -161,37 +135,4 @@ public class LoadingActivity extends AppCompatActivity {
             }
         });
     }
-    /*
-    private void fetchOffice() {
-        FirebaseDatabase.getInstance().getReference("office").orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, Object> rawMap = (Map<String, Object>) dataSnapshot.getValue();
-                for (Map.Entry<String, Object> rawEntry : rawMap.entrySet()) {
-                    Office office = Tools.rawToOffice(rawEntry);
-                    OffiMate.offices.put(office.id, office);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) { }
-        });
-    }
-
-    private void fetchCoworkers() {
-        FirebaseDatabase.getInstance().getReference("coworkers").orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, Object> rawMap = (Map<String, Object>) dataSnapshot.getValue();
-                for (Map.Entry<String, Object> rawEntry : rawMap.entrySet()) {
-                    Coworker coworker = Tools.rawToCoworker(rawEntry);
-                    OffiMate.coworkers.put(coworker.id, coworker);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) { }
-        });
-    }
-    */
 }
