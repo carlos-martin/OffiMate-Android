@@ -56,7 +56,6 @@
                 android:minLines="1"
                 android:text="99/99/99"
                 android:textAlignment="textEnd"
-                android:textSize="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -75,7 +74,6 @@
                 android:minLines="1"
                 android:maxLines="1"
                 android:text="execution: Ensures accountability"
-                android:textSize="14dp"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +91,6 @@
                 android:minLines="1"
                 android:maxLines="2"
                 android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam facilisis felis nisl, et posuere magna imperdiet vel. Maecenas quis dui eu turpis auctor vehicula. Fusce vel sodales arcu."
-                android:textSize="12dp"
                 android:ellipsize="end"/>
         </LinearLayout>
 

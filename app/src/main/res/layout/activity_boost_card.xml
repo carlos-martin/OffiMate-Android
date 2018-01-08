@@ -70,7 +70,6 @@
             android:minLines="1"
             android:maxLines="1"
             android:text="Ensures accountability"
-            android:textSize="18dp"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -85,13 +84,13 @@
             android:minLines="1"
             android:maxLines="1"
             android:text="October 2, 2017 - 14:03"
-            android:textSize="18dp"
             android:ellipsize="end"
             android:layout_below="@+id/deepBCTitleTextView"/>
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="6dp"
+            android:layout_marginLeft="16dp"
             android:background="@android:color/darker_gray"
             android:layout_below="@+id/deepBCDateTextView"/>
     </RelativeLayout>
@@ -111,8 +110,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet purus odio. Aenean eget eros id sapien interdum elementum. Etiam at consectetur neque, vitae suscipit enim. Praesent finibus nulla eu tortor faucibus, vel sodales sapien dignissim. Curabitur vitae magna malesuada, cursus lectus vitae, dapibus metus. Donec scelerisque commodo dui eu accumsan. Integer et nunc eleifend, aliquet ipsum vel, luctus quam. Nam ut elit odio. Suspendisse in tincidunt lorem. Donec tincidunt urna sed commodo feugiat. Etiam vitae aliquam nunc. Proin suscipit lectus mi, eu consequat tortor condimentum id. Curabitur ut dignissim magna."
-            android:textColor="@color/black"
-            android:textSize="18dp"/>
+            android:textColor="@color/black"/>
 
     </RelativeLayout>
 
