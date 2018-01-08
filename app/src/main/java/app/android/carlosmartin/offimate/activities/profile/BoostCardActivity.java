@@ -88,8 +88,10 @@ public class BoostCardActivity extends AppCompatActivity {
 
         this.dateTextView = findViewById(R.id.deepBCDateTextView);
         NewDate date = this.boostCard.date;
-        String sdate = date.getMonthName()+" "+date.day+", "+date.year+" - "+date.hour+":"+ date.hour;
-        this.dateTextView.setText(sdate);
+        String hour =    (date.hour <= 9    ? "0"+date.hour    : ""+date.hour);
+        String minutes = (date.minutes <= 9 ? "0"+date.minutes : ""+date.minutes);
+        String sDate = date.getMonthName()+" "+date.day+", "+date.year+" - "+hour+":"+minutes;
+        this.dateTextView.setText(sDate);
 
         this.bodyTextView = findViewById(R.id.deepBCBodyTextView);
         this.bodyTextView.setText(this.boostCard.message);
