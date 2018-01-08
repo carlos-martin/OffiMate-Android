@@ -2,6 +2,7 @@ package app.android.carlosmartin.offimate.activities.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -125,9 +126,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                /*
                 View view = findViewById(R.id.actionButton);
                 String message = "Firebase error.";
                 Tools.showInfoMessage(view, message);
+                */
             }
         };
 
@@ -145,9 +148,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                /*
                 View view = findViewById(R.id.actionButton);
                 String message = "Firebase error.";
                 Tools.showInfoMessage(view, message);
+                */
             }
         };
 
@@ -311,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void logOutAction() {
         //Toast.makeText(MainActivity.this, "Good Bye!", Toast.LENGTH_SHORT).show();
-
+        startLoadingView();
         OffiMate.mAuth.signOut();
         OffiMate.realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -320,9 +325,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        OffiMate.currentUser = null;
-        OffiMate.firebaseUser = null;
-        goToLoadingActivity();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                stopLoadingView();
+                OffiMate.currentUser = null;
+                OffiMate.firebaseUser = null;
+                goToLoadingActivity();
+            }
+        }, 1000);
     }
 
     //MARK: - List view function
@@ -331,7 +343,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //TODO: complete to go to selected channel activity.
         this.goToChannelActivity(this.channelList.get(position));
-
     }
 
     //MARK: - Navigation
@@ -359,16 +370,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void goToBoostCardInbox() {
-        //TODO: complete to go to Inbox Boost Card Activity
-        //Toast.makeText(MainActivity.this, "TO INBOX ACTIVITY", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MainActivity.this, BoostCardListActivity.class);
         intent.putExtra("activityType", BoostCardActivityType.INBOX);
         startActivity(intent);
     }
 
     private void goToBoostCardSend() {
-        //TODO: complete to go to Sent Boost Card Activity
-        //Toast.makeText(MainActivity.this, "TO SENT ACTIVITY", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MainActivity.this, BoostCardListActivity.class);
         intent.putExtra("activityType", BoostCardActivityType.SENT);
         startActivity(intent);
