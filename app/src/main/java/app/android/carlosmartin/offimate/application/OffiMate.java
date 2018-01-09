@@ -28,6 +28,8 @@ public class OffiMate extends Application {
     public static Map<String, Object> coworkers = new HashMap<>();
     public static Map<String, Object> offices = new HashMap<>();
 
+    public static String coworkerId;
+
     /* Connexion with our local data base */
     public static Realm realm;
 

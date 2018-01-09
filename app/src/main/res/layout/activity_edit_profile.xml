@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="app.android.carlosmartin.offimate.activities.profile.EditProfileActivity">
-
     <RelativeLayout
         android:id="@+id/editProfileLoadingPanel"
         android:layout_width="match_parent"
@@ -24,7 +23,6 @@
             android:indeterminate="true"
             android:id="@+id/progressBar3" />
     </RelativeLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,7 +36,6 @@
             android:layout_marginTop="16dp"
             android:text="PROFILE NAME TEXT VIEW"
             android:textColor="@color/colorAccent" />
-
         <EditText
             android:id="@+id/userNameEditText"
             android:layout_width="match_parent"
@@ -48,7 +45,6 @@
             android:layout_marginTop="8dp"
             android:ems="10"
             android:inputType="textEmailAddress"/>
-
         <TextView
             android:id="@+id/headerOfficeTextView"
             android:layout_width="match_parent"
@@ -58,7 +54,6 @@
             android:layout_marginTop="16dp"
             android:text="OFFICE TEXT VIEW"
             android:textColor="@color/colorAccent"/>
-
         <NumberPicker
             android:id="@+id/officeNumberPicker"
             android:layout_width="match_parent"
@@ -66,7 +61,16 @@
             android:layout_marginEnd="22dp"
             android:layout_marginStart="22dp"
             android:layout_marginTop="8dp"/>
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/saveActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                app:srcCompat="@drawable/ic_action_save_white" />
+        </android.support.design.widget.CoordinatorLayout>
     </LinearLayout>
-
-
 </android.support.constraint.ConstraintLayout>

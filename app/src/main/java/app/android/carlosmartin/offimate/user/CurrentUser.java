@@ -31,12 +31,6 @@ public class CurrentUser extends RealmObject {
     @Required
     private String officeName;
 
-    /*
-     * TODO: Add the Channels list associated to the current user office.
-     *
-    private RealmList<Channel> channels;
-     */
-
     public CurrentUser() {}
 
     public CurrentUser(String uid, String name, String email, String password, Office office) {
@@ -96,32 +90,4 @@ public class CurrentUser extends RealmObject {
         Log.d("OffiMate", tag + ": CurrentUser password:"   + this.getPassword());
         Log.d("OffiMate", tag + ": CurrentUser office:"     + this.getOffice().name);
     }
-
-    /*
-     * TODO: All functions need to implement the current user channels associated to the offices
-     *
-    public void initChannel (List<Channel> channels) {
-        //TODO: Init this.channels
-    }
-
-    public void cleanChannels () {
-        //TODO: Remove all channels list
-    }
-
-    public void addChannel (Channel channel, NewDate lastAccess) {
-        //TODO: Add a new channel to the channels list
-    }
-
-    public void updateChannel (Channel channel, NewDate lastAccess) {
-        //TODO: Update the a specific channel already at the channels list
-    }
-
-    public void insertChannel (int at, Channel channel, NewDate lastAccess) {
-        //TODO: Add a new channel on a specific position at the channels list
-    }
-
-    public void removeChannel (int index) {
-        //TODO: Remove the channel at index position at the channels list
-    }
-     */
 }

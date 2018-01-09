@@ -84,6 +84,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.observerChannel();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.initData();
+    }
+
+    private void initData() {
+        this.headerNameTextView.setText(OffiMate.currentUser.getName());
+        this.headerEmailTextView.setText(OffiMate.currentUser.getEmail());
+    }
+
     private void observerChannel() {
         this.startLoadingView();
         String currentOfficeId = OffiMate.currentUser.getOffice().id;
@@ -222,23 +233,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.navigationView.setNavigationItemSelectedListener(this);
 
         //HEADER
-        this.headerLayout = this.navigationView.getHeaderView(0);
-
-        this.headerNameTextView =  this.headerLayout.findViewById(R.id.name_nav_header_text_view);
-        this.headerNameTextView.setText(OffiMate.currentUser.getName());
-
+        this.headerLayout        = this.navigationView.getHeaderView(0);
+        this.headerNameTextView  = this.headerLayout.findViewById(R.id.name_nav_header_text_view);
         this.headerEmailTextView = this.headerLayout.findViewById(R.id.email_nav_header_text_view);
-        this.headerEmailTextView.setText(OffiMate.currentUser.getEmail());
-
-        this.headerImageView = this.headerLayout.findViewById(R.id.imageView);
+        this.headerImageView     = this.headerLayout.findViewById(R.id.imageView);
 
         //MENU
-        this.leftSideMenu = this.navigationView.getMenu();
-
-        this.officeMenuItem = this.leftSideMenu.findItem(R.id.nav_office);
-        this.officeMenuItem.setTitle(OffiMate.currentUser.getOffice().name);
-
+        this.leftSideMenu     = this.navigationView.getMenu();
         this.passwordMenuItem = this.leftSideMenu.findItem(R.id.nav_password);
+        this.officeMenuItem   = this.leftSideMenu.findItem(R.id.nav_office);
+        this.officeMenuItem.setTitle(OffiMate.currentUser.getOffice().name);
         this.changeViewPassword();
     }
 
@@ -308,8 +312,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
         }
     }
-
-
 
     private void changeViewPassword() {
         if (this.isPasswordHide) {

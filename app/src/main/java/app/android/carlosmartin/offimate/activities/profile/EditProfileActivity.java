@@ -1,5 +1,6 @@
 package app.android.carlosmartin.offimate.activities.profile;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -15,9 +16,16 @@ import java.util.Map;
 
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.application.OffiMate;
+import app.android.carlosmartin.offimate.models.Coworker;
 import app.android.carlosmartin.offimate.models.Office;
+import app.android.carlosmartin.offimate.user.CurrentUser;
+import io.realm.Realm;
 
 public class EditProfileActivity extends AppCompatActivity {
+
+    //Firebase
+    private FirebaseDatabase  database;
+    private DatabaseReference coworkerRef;
 
     //DataSource
     private String userName;
@@ -30,14 +38,21 @@ public class EditProfileActivity extends AppCompatActivity {
     private TextView     headerOfficeTextView;
     private EditText     nameEditText;
     private NumberPicker officeNumberPicker;
+    private FloatingActionButton actionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        this.initFirebase();
         this.initUI();
         this.initData();
+    }
+
+    private void initFirebase() {
+        this.database = FirebaseDatabase.getInstance();
+        this.coworkerRef = this.database.getReference("coworkers").child(OffiMate.coworkerId);
     }
 
     private void initUI() {
@@ -51,6 +66,50 @@ public class EditProfileActivity extends AppCompatActivity {
                 .setText("YOUR NAME:");
         this.headerOfficeTextView
                 .setText("YOUR OFFICE:");
+
+        this.actionButton = findViewById(R.id.saveActionButton);
+        this.actionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean hasChange = false;
+
+                int index  = officeNumberPicker.getValue();
+                Office currentOffice = officeList.get(index);
+                if (!currentOffice.equals(userOffice)) {
+                    userOffice = currentOffice;
+                    coworkerRef.child("officeId").setValue(userOffice.id);
+                    OffiMate.currentUser.setOffice(userOffice);
+                    hasChange = true;
+                }
+
+                String currentName = nameEditText.getText().toString();
+                if (!currentName.equals(userName)) {
+                    userName = currentName;
+                    coworkerRef.child("name").setValue(userName);
+                    OffiMate.currentUser.setName(userName);
+                    hasChange = true;
+                }
+
+                if (hasChange) {
+                    Coworker c = new Coworker(
+                            OffiMate.coworkerId,
+                            OffiMate.currentUser.getUid(),
+                            OffiMate.currentUser.getEmail(),
+                            OffiMate.currentUser.getName(),
+                            OffiMate.currentUser.getOffice()
+                    );
+                    OffiMate.coworkers.put(c.uid, c);
+
+                    OffiMate.realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            realm.copyToRealmOrUpdate(OffiMate.currentUser);
+                        }
+                    });
+                }
+                finish();
+            }
+        });
     }
 
     private void initData() {
@@ -74,6 +133,7 @@ public class EditProfileActivity extends AppCompatActivity {
         this.nameEditText.setText(this.userName);
         this.stopLoading();
     }
+
     private void stopLoading() {
         findViewById(R.id.editProfileLoadingPanel).setVisibility(View.GONE);
     }

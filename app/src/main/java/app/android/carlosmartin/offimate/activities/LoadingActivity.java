@@ -25,6 +25,7 @@ import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Coworker;
 import app.android.carlosmartin.offimate.models.Office;
+import app.android.carlosmartin.offimate.user.CurrentUser;
 
 public class LoadingActivity extends AppCompatActivity {
 
@@ -49,23 +50,47 @@ public class LoadingActivity extends AppCompatActivity {
     private void validationProcess() {
         this.updateLabel("Validating data...");
 
-        if (OffiMate.currentUser == null && OffiMate.firebaseUser == null) {
-            goToOnBoardActivity();
-        } else if (OffiMate.currentUser != null && OffiMate.firebaseUser == null) {
-            String userEmail = OffiMate.currentUser.getEmail();
-            String userPassword = OffiMate.currentUser.getPassword();
-            OffiMate.mAuth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        fetchData();
-                    } else {
-                        goToOnBoardActivity();
+        /**
+         │ firebaseUser │ currentUser  │ status  │
+         ├──────────────┼──────────────┼─────────┤
+         │    !null     │    !null     │    0    │
+         ├──────────────┼──────────────┼─────────┤
+         │     null     │    !null     │    1    │
+         ├──────────────┼──────────────┼─────────┤
+         │    !null     │     null     │    2    │
+         ├──────────────┼──────────────┼─────────┤
+         │     null     │     null     │    3    │
+         └──────────────┴──────────────┴─────────┘
+         */
+
+        int status = 0;
+        if (OffiMate.firebaseUser == null)
+            status += 1;
+
+        if (OffiMate.currentUser == null)
+            status += 2;
+
+        switch (status) {
+            case 0:
+                fetchData();
+                break;
+            case 1:
+                String userEmail = OffiMate.currentUser.getEmail();
+                String userPass  = OffiMate.currentUser.getPassword();
+                OffiMate.mAuth.signInWithEmailAndPassword(userEmail, userPass).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            fetchData();
+                        } else {
+                            goToOnBoardActivity();
+                        }
                     }
-                }
-            });
-        } else {
-            fetchData();
+                });
+                break;
+            default:
+                goToOnBoardActivity();
+                break;
         }
     }
 
@@ -117,6 +142,11 @@ public class LoadingActivity extends AppCompatActivity {
                         for (Map.Entry<String, Object> rawEntry : rawMap.entrySet()) {
                             Coworker coworker = Tools.rawToCoworker(rawEntry);
                             OffiMate.coworkers.put(coworker.uid, coworker);
+
+                            if (OffiMate.currentUser.getUid().equals(coworker.uid)) {
+                                OffiMate.coworkerId = coworker.id;
+                            }
+
                         }
 
                         goToMainActivity();
