@@ -35,7 +35,8 @@
         <activity android:name=".activities.profile.BoostCardListActivity" />
         <activity android:name=".activities.profile.BoostCardActivity" />
         <activity android:name=".activities.profile.EditProfileActivity" />
-        <activity android:name=".activities.main.NewChannelActivity"></activity>
+        <activity android:name=".activities.main.NewChannelActivity" />
+        <activity android:name=".activities.main.NewOfficeActivity"></activity>
     </application>
 
 </manifest>

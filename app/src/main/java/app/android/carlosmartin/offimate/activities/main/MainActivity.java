@@ -303,9 +303,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 this.goToBoostCardSend();
                 //drawer.closeDrawer(GravityCompat.START);
                 return true;
+            /* TODO: connexion to create a new office here
             case R.id.nav_new_office:
                 this.goToNewOffice();
                 return true;
+            */
             case R.id.nav_log_out:
                 this.logOutAction();
                 drawer.closeDrawer(GravityCompat.START);

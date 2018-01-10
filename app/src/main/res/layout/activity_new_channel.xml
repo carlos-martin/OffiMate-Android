@@ -27,7 +27,7 @@
             android:layout_marginStart="22dp"
             android:layout_marginTop="8dp"
             android:ems="10"
-            android:inputType="textEmailAddress"/>
+            android:inputType="textCapWords"/>
     </LinearLayout>
 
     <android.support.design.widget.CoordinatorLayout

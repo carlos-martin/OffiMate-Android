@@ -44,7 +44,7 @@
             android:layout_marginStart="22dp"
             android:layout_marginTop="8dp"
             android:ems="10"
-            android:inputType="textEmailAddress"/>
+            android:inputType="textCapWords"/>
         <TextView
             android:id="@+id/headerOfficeTextView"
             android:layout_width="match_parent"
