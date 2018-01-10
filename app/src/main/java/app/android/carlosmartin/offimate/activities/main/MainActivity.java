@@ -211,8 +211,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                */
+                goToNewChannelActivity();
             }
         });
     }
@@ -396,6 +399,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void goToNewOffice() {
         //TODO: complete to go to new office activity
+    }
+
+    private void goToNewChannelActivity() {
+        Intent intent = new Intent(MainActivity.this, NewChannelActivity.class);
+        startActivity(intent);
     }
 
     //MARK: - Loading View

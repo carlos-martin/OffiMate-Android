@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by carlos.martin on 17/11/2017.
@@ -27,6 +29,14 @@ public class Channel implements Comparable<Channel>, Serializable {
     public Channel(String id, String name, String creator, ArrayList<Message> message) {
         this(id, name, creator);
         this.message = message;
+    }
+
+    public Map<String, String> toMap(String officeId) {
+        HashMap<String, String> result = new HashMap<>();
+        result.put("creator",  creator);
+        result.put("name",     name);
+        result.put("officeId", officeId);
+        return result;
     }
 
     public void addMessage(Message message) {

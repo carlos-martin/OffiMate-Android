@@ -18,7 +18,6 @@ import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.models.Coworker;
 import app.android.carlosmartin.offimate.models.Office;
-import app.android.carlosmartin.offimate.user.CurrentUser;
 import io.realm.Realm;
 
 public class EditProfileActivity extends AppCompatActivity {
@@ -38,7 +37,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private TextView     headerOfficeTextView;
     private EditText     nameEditText;
     private NumberPicker officeNumberPicker;
-    private FloatingActionButton actionButton;
+    private FloatingActionButton saveActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +61,11 @@ public class EditProfileActivity extends AppCompatActivity {
         this.headerOfficeTextView = findViewById(R.id.headerOfficeTextView);
         this.nameEditText         = findViewById(R.id.userNameEditText);
         this.officeNumberPicker   = findViewById(R.id.officeNumberPicker);
-        this.headerNameTextView
-                .setText("YOUR NAME:");
-        this.headerOfficeTextView
-                .setText("YOUR OFFICE:");
+        this.headerNameTextView.setText("YOUR NAME:");
+        this.headerOfficeTextView.setText("YOUR OFFICE:");
 
-        this.actionButton = findViewById(R.id.saveActionButton);
-        this.actionButton.setOnClickListener(new View.OnClickListener() {
+        this.saveActionButton = findViewById(R.id.saveActionButton);
+        this.saveActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean hasChange = false;
