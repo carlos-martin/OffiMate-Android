@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.stfalcon.chatkit.commons.models.IMessage;
 import com.stfalcon.chatkit.commons.models.IUser;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
  * Created by carlos.martin on 17/11/2017.
  */
 
-public class Message implements Comparable<Message>, IMessage {
+public class Message implements Comparable<Message>, IMessage, Serializable {
     public final String id;
     public final String senderId;
     public final String name;

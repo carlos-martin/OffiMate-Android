@@ -66,27 +66,42 @@ public class Tools {
         String userId   = coworkerMap.get("userId");
         String officeId = coworkerMap.get("officeId");
         Office office;
-
         if (OffiMate.offices.get(officeId) == null) {
-            office = new Office(officeId, "unknown");
+            office = new Office(officeId, "Unknown Office");
         } else {
             office = (Office) OffiMate.offices.get(officeId);
         }
+        return new Coworker(id, userId, email, name, office);
+    }
 
+    public static Coworker dataSnapshotToCoworker (DataSnapshot dataSnapshot) {
+        Map<String, String> raw = (Map<String, String>) dataSnapshot.getValue();
+        String   id       = dataSnapshot.getKey();
+        String   email    = raw.get("email");
+        String   name     = raw.get("name");
+        String   userId   = raw.get("userId");
+        String   officeId = raw.get("officeId");
+        Office   office;
+        if (OffiMate.offices.get(officeId) != null) {
+            office = (Office) OffiMate.offices.get(officeId);
+        } else {
+            office = new Office(officeId, "Unknown Office");
+        }
         return new Coworker(id, userId, email, name, office);
     }
 
     public static BoostCard dataSnapshotToBoostCard (DataSnapshot dataSnapshot) {
         Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
-        final String  id         = dataSnapshot.getKey();
-        final NewDate date       = new NewDate((long) raw.get("date"));
-        final String  header     = (String) raw.get("header");
-        final String  message    = (String) raw.get("message");
-        final String  receiverId = (String) raw.get("receiverId");
-        final String  senderId   = (String) raw.get("senderId");
-        final String  stype      = (String) raw.get("type");
-        final BoostCardType type = (stype.equals("execution") ? BoostCardType.EXECUTION : BoostCardType.PASSION);
-        final boolean unread     = (boolean) raw.get("unread");
+
+        String  id         = dataSnapshot.getKey();
+        NewDate date       = new NewDate((long) raw.get("date"));
+        String  header     = (String) raw.get("header");
+        String  message    = (String) raw.get("message");
+        String  receiverId = (String) raw.get("receiverId");
+        String  senderId   = (String) raw.get("senderId");
+        String  stype      = (String) raw.get("type");
+        BoostCardType type = (stype.equals("execution") ? BoostCardType.EXECUTION : BoostCardType.PASSION);
+        //boolean unread     = (boolean) raw.get("unread");
 
         return new BoostCard(id, senderId, receiverId, type, header, message, date);
     }

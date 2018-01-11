@@ -1,13 +1,13 @@
-package app.android.carlosmartin.offimate.activities.coworkers;
+package app.android.carlosmartin.offimate.activities.main;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -20,50 +20,58 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import app.android.carlosmartin.offimate.R;
 import app.android.carlosmartin.offimate.adapters.coworkers.CoworkersListAdapter;
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
+import app.android.carlosmartin.offimate.models.Channel;
 import app.android.carlosmartin.offimate.models.Coworker;
-import app.android.carlosmartin.offimate.models.Office;
-import app.android.carlosmartin.offimate.user.CurrentUser;
 
-public class CoworkerListActivity extends AppCompatActivity implements ListView.OnItemClickListener {
+public class ChannelInfoActivity extends AppCompatActivity {
 
     //Firebase
     private FirebaseDatabase  database;
     private DatabaseReference coworkerRef;
 
     //UI
-    private TextView coworkersTextView;
-    private ListView listView;
+    private MenuItem barMenuButton;
+    private TextView channelTextView;
+    private TextView membersTextView;
+    private ListView membersListView;
     private CoworkersListAdapter adapter;
 
     //DataSource
     private List<Coworker> coworkerList = new ArrayList<Coworker>();
-    private Coworker selectedCoworker;
+    private Channel currentChannel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_coworker_list);
+        setContentView(R.layout.activity_channel_info);
         this.initFirebase();
         this.initUI();
         this.observerCoworker();
     }
 
     private void initUI() {
-        setTitle("Coworkers");
+        setTitle("Channel Information");
 
-        this.stopLoadingView();
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            this.currentChannel = (Channel) bundle.getSerializable("channel");
+        } else {
+            this.currentChannel = new Channel("", "", "");
+        }
 
-        this.coworkersTextView = findViewById(R.id.textViewCoworkers);
-        this.coworkersTextView.setText("YOUR OFFICE COWORKERS");
+        this.channelTextView = findViewById(R.id.channelNameTextView);
+        this.channelTextView.setText(this.currentChannel.name);
 
-        this.listView = findViewById(R.id.coworkersListView);
-        this.listView.setOnItemClickListener(this);
+        this.membersTextView = findViewById(R.id.membersTextView);
+        this.membersTextView.setText("MEMBERS");
+
+        this.membersListView = findViewById(R.id.membersListView);
+
     }
 
     private void initFirebase() {
@@ -108,7 +116,7 @@ public class CoworkerListActivity extends AppCompatActivity implements ListView.
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 String message = "Firebase error.";
-                Tools.showInfoMessage(listView, message);
+                Tools.showInfoMessage(membersListView, message);
             }
 
             public void addCoworker(Coworker coworker) {
@@ -174,35 +182,46 @@ public class CoworkerListActivity extends AppCompatActivity implements ListView.
             Tools.showInfoMessage(view, "There are no coworkers yet.");
         }
         this.adapter = new CoworkersListAdapter(this, R.layout.list_item_coworkers, this.coworkerList);
-        this.listView.setAdapter(this.adapter);
-        registerForContextMenu(this.listView);
-    }
-
-
-
-    //MARK: - List view function
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        this.selectedCoworker = this.coworkerList.get(position);
-        this.goToCoworkerProfileActivity();
+        this.membersListView.setAdapter(this.adapter);
+        registerForContextMenu(this.membersListView);
     }
 
     //MARK: - Loading View
 
     private void startLoadingView() {
-        findViewById(R.id.coworkersLoadingPanel).setVisibility(View.VISIBLE);
+        findViewById(R.id.membersLoadingPanel).setVisibility(View.VISIBLE);
     }
 
     private void stopLoadingView() {
-        findViewById(R.id.coworkersLoadingPanel).setVisibility(View.GONE);
+        findViewById(R.id.membersLoadingPanel).setVisibility(View.GONE);
     }
 
-    //MARK: - Navigation
+    //MARK: - Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (OffiMate.currentUser.getUid().equals(this.currentChannel.creator)) {
+            MenuInflater menuInflater = getMenuInflater();
+            menuInflater.inflate(R.menu.action_bar_menu_edit, menu);
+            this.barMenuButton = menu.findItem(R.id.edit_bar_button_item);
+            return true;
+        } else {
+            return false;
+        }
 
-    private void goToCoworkerProfileActivity() {
-        Intent intent = new Intent(CoworkerListActivity.this, CoworkerProfileActivity.class);
-        intent.putExtra("coworker", this.selectedCoworker);
-        startActivity(intent);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.edit_bar_button_item:
+                this.editAction();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void editAction() {
+
     }
 }

@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="app.android.carlosmartin.offimate.activities.coworkers.CoworkerListActivity">
+    tools:context="app.android.carlosmartin.offimate.activities.main.ChannelInfoActivity">
 
     <RelativeLayout
-        android:id="@+id/coworkersLoadingPanel"
+        android:id="@+id/membersLoadingPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="0dp"
@@ -26,7 +26,21 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/textViewCoworkers"
+        android:id="@+id/channelNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="CHANNEL NAME"
+        android:textAlignment="center"
+        android:textSize="22dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/membersTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="14dp"
@@ -35,17 +49,16 @@
         android:text="TEXT VIEW COWORKERS"
         android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.342"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/channelNameTextView" />
 
     <ListView
-        android:id="@+id/coworkersListView"
+        android:id="@+id/membersListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewCoworkers" />
+        app:layout_constraintTop_toBottomOf="@+id/membersTextView" />
 
 </android.support.constraint.ConstraintLayout>

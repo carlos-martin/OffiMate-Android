@@ -1,5 +1,6 @@
 package app.android.carlosmartin.offimate.activities.main;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -159,7 +160,7 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
         newMessageRef.setValue(messageValue);
     }
 
-    // Menu
+    //MARK: - Menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -180,6 +181,9 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
     }
 
     private void channelInfoAction() {
-        Tools.showInfoMessage(this.inputView, "Channel info");
+        //Tools.showInfoMessage(this.inputView, "Channel info");
+        Intent intent = new Intent(ChannelActivity.this, ChannelInfoActivity.class);
+        intent.putExtra("channel", this.channel);
+        startActivity(intent);
     }
 }
