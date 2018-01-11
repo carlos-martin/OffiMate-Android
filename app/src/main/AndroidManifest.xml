@@ -37,7 +37,8 @@
         <activity android:name=".activities.profile.EditProfileActivity" />
         <activity android:name=".activities.main.NewChannelActivity" />
         <activity android:name=".activities.main.NewOfficeActivity" />
-        <activity android:name=".activities.main.ChannelInfoActivity"></activity>
+        <activity android:name=".activities.main.ChannelInfoActivity" />
+        <activity android:name=".activities.main.ChannelEditActivity"></activity>
     </application>
 
 </manifest>

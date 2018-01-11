@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         this.initData();
+        this.reloadListView();
     }
 
     private void initData() {

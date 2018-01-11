@@ -59,6 +59,12 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
         this.observerMessage();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setTitle(this.channel.name);
+    }
+
     private void initFirebase() {
         this.database = FirebaseDatabase.getInstance();
         this.channelRef  = this.database.getReference("channels").child(this.channel.id);
@@ -74,9 +80,9 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
     }
 
     private void initUI() {
-        setTitle(this.channel.name);
+        //setTitle(this.channel.name);
         this.inputView = (MessageInput) findViewById(R.id.input);
-        inputView.setInputListener(new MessageInput.InputListener() {
+        this.inputView.setInputListener(new MessageInput.InputListener() {
             @Override
             public boolean onSubmit(CharSequence input) {
                 sendMessage(input.toString());

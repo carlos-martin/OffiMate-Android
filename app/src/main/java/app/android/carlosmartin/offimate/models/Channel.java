@@ -14,9 +14,9 @@ import java.util.Map;
  */
 
 public class Channel implements Comparable<Channel>, Serializable {
-    public final String id;
-    public final String name;
-    public final String creator;
+    public String id;
+    public String name;
+    public String creator;
     public ArrayList<Message> message;
 
     public Channel(String id, String name, String creator) {
