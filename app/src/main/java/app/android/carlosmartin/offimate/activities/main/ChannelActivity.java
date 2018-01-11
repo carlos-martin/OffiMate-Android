@@ -2,6 +2,10 @@ package app.android.carlosmartin.offimate.activities.main;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -30,9 +34,10 @@ import app.android.carlosmartin.offimate.user.CurrentUser;
 public class ChannelActivity extends AppCompatActivity implements DateFormatter.Formatter {
 
     //UI
-    MessagesList messagesList;
-    MessagesListAdapter<Message> adapter;
-    MessageInput inputView;
+    private MenuItem     barMenuButton;
+    private MessageInput inputView;
+    private MessagesList messagesList;
+    private MessagesListAdapter<Message> adapter;
 
     //Firebase
     private FirebaseDatabase database;
@@ -152,5 +157,29 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
                 (new NewDate(new Date())).id);
         Map<String, Object> messageValue = newMessage.toMap();
         newMessageRef.setValue(messageValue);
+    }
+
+    // Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.action_bar_menu_info, menu);
+        this.barMenuButton = menu.findItem(R.id.info_bar_button_item);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.info_bar_button_item:
+                this.channelInfoAction();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void channelInfoAction() {
+        Tools.showInfoMessage(this.inputView, "Channel info");
     }
 }
