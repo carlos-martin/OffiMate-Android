@@ -46,23 +46,35 @@ public class ChannelsListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
+        Channel channel = this.channelList.get(position);
         if (convertView == null) {
             LayoutInflater layoutInflater = LayoutInflater.from(this.context);
             convertView = layoutInflater.inflate(R.layout.list_item_channels, null);
 
             holder = new ViewHolder();
             holder.channelTextView = convertView.findViewById(R.id.textViewCell);
+            holder.counterTextView = convertView.findViewById(R.id.channelCounterTextView);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.channelTextView.setText(this.channelList.get(position).name);
+        holder.channelTextView.setText(channel.name);
+
+        if (channel.message != null && channel.message.size() > 0) {
+            holder.counterTextView.setVisibility(View.VISIBLE);
+            holder.counterTextView.setText(channel.message.size()+"");
+        } else {
+            holder.counterTextView.setVisibility(View.INVISIBLE);
+            //holder.counterTextView.setText("");
+        }
+
 
         return convertView;
     }
 
     static class ViewHolder {
         private TextView channelTextView;
+        private TextView counterTextView;
     }
 }

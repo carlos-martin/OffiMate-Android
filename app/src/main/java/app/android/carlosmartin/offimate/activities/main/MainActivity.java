@@ -27,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,7 @@ import app.android.carlosmartin.offimate.adapters.profile.BoostCardActivityType;
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.helpers.Tools;
 import app.android.carlosmartin.offimate.models.Channel;
+import app.android.carlosmartin.offimate.models.Message;
 import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ListView.OnItemClickListener {
@@ -112,12 +114,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Map<String, String> raw = (Map<String, String>) dataSnapshot.getValue();
+                Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
 
                 String channelId = dataSnapshot.getKey();
-                String channelName =      raw.get("name");
-                String channelCreatorId = raw.get("creator");
-                channelList.add(new Channel(channelId, channelName, channelCreatorId));
+                String channelName =      (String) raw.get("name");
+                String channelCreatorId = (String) raw.get("creator");
+                ArrayList<Message> messages = new ArrayList<>();
+
+                HashMap<String, Object> messagesRaw = (HashMap<String, Object>) raw.get("messages");
+                if (messagesRaw == null || messagesRaw.isEmpty()) {
+                    channelList.add(new Channel(channelId, channelName, channelCreatorId));
+                } else {
+                    for (Map.Entry<String, Object> messageRaw : messagesRaw.entrySet()) {
+                        Message m = Tools.mapEntryToMessage(messageRaw, true);
+                        messages.add(m);
+                    }
+                    channelList.add(new Channel(channelId, channelName, channelCreatorId, messages));
+                }
 
                 stopLoadingView();
                 reloadListView();

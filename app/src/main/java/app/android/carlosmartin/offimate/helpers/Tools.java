@@ -15,7 +15,9 @@ import java.util.regex.Pattern;
 import app.android.carlosmartin.offimate.application.OffiMate;
 import app.android.carlosmartin.offimate.models.BoostCard;
 import app.android.carlosmartin.offimate.models.BoostCardType;
+import app.android.carlosmartin.offimate.models.Channel;
 import app.android.carlosmartin.offimate.models.Coworker;
+import app.android.carlosmartin.offimate.models.Message;
 import app.android.carlosmartin.offimate.models.NewDate;
 import app.android.carlosmartin.offimate.models.Office;
 
@@ -104,5 +106,73 @@ public class Tools {
         //boolean unread     = (boolean) raw.get("unread");
 
         return new BoostCard(id, senderId, receiverId, type, header, message, date);
+    }
+
+    public static Channel dataSnapshotToChannel (DataSnapshot dataSnapshot) {
+        return null;
+    }
+
+    public static Message dataSnapshotToMessage (DataSnapshot dataSnapshot) {
+        Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+        String id       = dataSnapshot.getKey();
+        String senderId = (String) raw.get("uid");
+        String text     = (String) raw.get("text");
+        long   date     = (long)   raw.get("date");
+        if (OffiMate.coworkers.get(senderId) == null) {
+            return null;
+        } else {
+            Coworker coworker = (Coworker) OffiMate.coworkers.get(senderId);
+            return new Message(id, senderId, coworker.name, text, date);
+        }
+    }
+
+    public static Message dataSnapshotToMessage (DataSnapshot dataSnapshot, boolean weak) {
+        if (!weak) {
+            return dataSnapshotToMessage(dataSnapshot);
+        } else {
+            Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+            String id       = dataSnapshot.getKey();
+            String senderId = (String) raw.get("uid");
+            String text     = (String) raw.get("text");
+            long   date     = (long)   raw.get("date");
+            if (OffiMate.coworkers.get(senderId) == null) {
+                return new Message(id, senderId, "unknown user", text, date);
+            } else {
+                Coworker coworker = (Coworker) OffiMate.coworkers.get(senderId);
+                return new Message(id, senderId, coworker.name, text, date);
+            }
+        }
+    }
+
+    public static Message mapEntryToMessage (Map.Entry<String, Object> messageRaw) {
+        Map<String, Object> messageMap = (Map<String, Object>) messageRaw.getValue();
+        String id       = messageRaw.getKey();
+        String senderId = (String) messageMap.get("uid");
+        String text     = (String) messageMap.get("text");
+        long   date     = (long)   messageMap.get("date");
+        if (OffiMate.coworkers.get(senderId) == null) {
+            return null;
+        } else {
+            Coworker coworker = (Coworker) OffiMate.coworkers.get(senderId);
+            return new Message(id, senderId, coworker.name, text, date);
+        }
+    }
+
+    public static Message mapEntryToMessage (Map.Entry<String, Object> messageRaw, boolean weak) {
+        if (!weak) {
+            return mapEntryToMessage(messageRaw);
+        } else {
+            Map<String, Object> messageMap = (Map<String, Object>) messageRaw.getValue();
+            String id       = messageRaw.getKey();
+            String senderId = (String) messageMap.get("uid");
+            String text     = (String) messageMap.get("text");
+            long   date     = (long)   messageMap.get("date");
+            if (OffiMate.coworkers.get(senderId) == null) {
+                return new Message(id, senderId, "unknown user", text, date);
+            } else {
+                Coworker coworker = (Coworker) OffiMate.coworkers.get(senderId);
+                return new Message(id, senderId, coworker.name, text, date);
+            }
+        }
     }
 }

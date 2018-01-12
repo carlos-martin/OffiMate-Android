@@ -120,31 +120,28 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
-                final String   id       = dataSnapshot.getKey();
-                final String   senderId = (String)   raw.get("uid");
-                final String   text     = (String)   raw.get("text");
-                final long     date     = (long)     raw.get("date");
-
-                if (OffiMate.coworkers.get(senderId) == null) {
-                    coworkerRef.orderByChild("userId").equalTo(senderId).addListenerForSingleValueEvent(new ValueEventListener() {
+                Message message = Tools.dataSnapshotToMessage(dataSnapshot);
+                if (message == null) {
+                    final DataSnapshot messageDataSnapshot = dataSnapshot;
+                    String uid = (String)((Map<String, Object>) dataSnapshot.getValue()).get("uid");
+                    coworkerRef.orderByChild("userId").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+                        public void onDataChange(DataSnapshot coworkerDataSnapshot) {
+                            Map<String, Object> raw = (Map<String, Object>) coworkerDataSnapshot.getValue();
                             Map.Entry<String, Object> entry = raw.entrySet().iterator().next();
                             //Updating coworker
                             Coworker coworker = Tools.rawToCoworker(entry);
                             OffiMate.coworkers.put(coworker.id, coworker);
                             //Adding message
-                            addMessage(new Message(id, senderId, coworker.name, text, date));
+                            Message message = Tools.dataSnapshotToMessage(messageDataSnapshot, true);
+                            addMessage(message);
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) { /*TODO: handler error*/ }
                     });
                 } else {
-                    Coworker coworker = (Coworker) OffiMate.coworkers.get(senderId);
-                    addMessage(new Message(id, senderId, coworker.name, text, date));
+                    addMessage(message);
                 }
             }
 
