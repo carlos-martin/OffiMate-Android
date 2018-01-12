@@ -88,7 +88,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         this.initData();
-        this.reloadListView();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            this.channelList.set(requestCode, (Channel) data.getSerializableExtra("channel"));
+            this.reloadListView();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void initData() {
@@ -359,15 +368,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //TODO: complete to go to selected channel activity.
-        this.goToChannelActivity(this.channelList.get(position));
+        this.goToChannelActivity(this.channelList.get(position), position);
     }
 
     //MARK: - Navigation
 
-    private void goToChannelActivity(Channel channel) {
+    private void goToChannelActivity(Channel channel, int position) {
         Intent intent = new Intent(MainActivity.this, ChannelActivity.class);
         intent.putExtra("channel", channel);
-        startActivity(intent);
+        startActivityForResult(intent, position);
     }
 
     private void goToCoworkersActivity() {

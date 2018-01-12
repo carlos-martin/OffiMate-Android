@@ -48,6 +48,7 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
 
     //DataSource
     private Channel channel;
+    private Channel deprecatedChannel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +61,26 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        setTitle(this.channel.name);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            this.deprecatedChannel = this.channel;
+            this.channel = (Channel) data.getSerializableExtra("channel");
+            setTitle(this.channel.name);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (this.deprecatedChannel != null && !this.deprecatedChannel.name.equals(this.channel.name)) {
+            Intent intent = new Intent();
+            intent.putExtra("channel", channel);
+            setResult(RESULT_OK, intent);
+            finish();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void initFirebase() {
@@ -80,7 +98,7 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
     }
 
     private void initUI() {
-        //setTitle(this.channel.name);
+        setTitle(this.channel.name);
         this.inputView = (MessageInput) findViewById(R.id.input);
         this.inputView.setInputListener(new MessageInput.InputListener() {
             @Override
@@ -190,6 +208,6 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
         //Tools.showInfoMessage(this.inputView, "Channel info");
         Intent intent = new Intent(ChannelActivity.this, ChannelInfoActivity.class);
         intent.putExtra("channel", this.channel);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 }

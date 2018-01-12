@@ -49,6 +49,7 @@ public class ChannelInfoActivity extends AppCompatActivity implements ListView.O
     //DataSource
     private List<Coworker> coworkerList = new ArrayList<Coworker>();
     private Channel  currentChannel;
+    private Channel  deprecatedChannel;
     private Coworker selectedCoworker;
 
     @Override
@@ -56,29 +57,46 @@ public class ChannelInfoActivity extends AppCompatActivity implements ListView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel_info);
         this.initFirebase();
+        this.fetchBundle();
         this.initUI();
         this.observerCoworker();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        this.updateName();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            this.deprecatedChannel = this.currentChannel;
+            this.currentChannel = (Channel) data.getSerializableExtra("channel");
+            this.channelTextView.setText(this.currentChannel.name);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
-    private void updateName() {
-        this.channelTextView.setText(this.currentChannel.name);
+    @Override
+    public void onBackPressed() {
+        if (this.deprecatedChannel != null && !this.deprecatedChannel.name.equals(this.currentChannel.name)) {
+            Intent intent = new Intent();
+            intent.putExtra("channel", currentChannel);
+            setResult(RESULT_OK, intent);
+            finish();
+        } else {
+            super.onBackPressed();
+        }
     }
 
-    private void initUI() {
-        setTitle("Channel Information");
-
+    private void fetchBundle() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             this.currentChannel = (Channel) bundle.getSerializable("channel");
         } else {
             this.currentChannel = new Channel("", "", "");
         }
+    }
+
+
+    private void initUI() {
+        setTitle("Channel Information");
 
         this.channelTextView = findViewById(R.id.channelNameTextView);
         this.channelTextView.setText(this.currentChannel.name);
@@ -88,7 +106,6 @@ public class ChannelInfoActivity extends AppCompatActivity implements ListView.O
 
         this.membersListView = findViewById(R.id.membersListView);
         this.membersListView.setOnItemClickListener(this);
-
     }
 
     private void initFirebase() {
@@ -261,7 +278,7 @@ public class ChannelInfoActivity extends AppCompatActivity implements ListView.O
         //Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(ChannelInfoActivity.this, ChannelEditActivity.class);
         intent.putExtra("channel", this.currentChannel);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
     private void deleteAction() {

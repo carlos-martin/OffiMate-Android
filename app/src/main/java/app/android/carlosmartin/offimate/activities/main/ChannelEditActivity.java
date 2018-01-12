@@ -1,5 +1,6 @@
 package app.android.carlosmartin.offimate.activities.main;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -63,6 +64,10 @@ public class ChannelEditActivity extends AppCompatActivity {
                     //TODO: Update back the new name
                     currentChannel.name = newName;
                     channelRef.child("name").setValue(newName);
+
+                    Intent intent = new Intent();
+                    intent.putExtra("channel", currentChannel);
+                    setResult(RESULT_OK, intent);
                     finish();
                 }
             }
