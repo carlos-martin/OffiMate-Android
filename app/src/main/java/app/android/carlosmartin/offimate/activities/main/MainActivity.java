@@ -123,22 +123,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 HashMap<String, Object> messagesRaw = (HashMap<String, Object>) raw.get("messages");
                 if (messagesRaw == null || messagesRaw.isEmpty()) {
-                    channelList.add(new Channel(channelId, channelName, channelCreatorId));
+                    addChannel(new Channel(channelId, channelName, channelCreatorId));
                 } else {
                     for (Map.Entry<String, Object> messageRaw : messagesRaw.entrySet()) {
                         Message m = Tools.mapEntryToMessage(messageRaw, true);
                         messages.add(m);
                     }
-                    channelList.add(new Channel(channelId, channelName, channelCreatorId, messages));
+                    addChannel(new Channel(channelId, channelName, channelCreatorId, messages));
                 }
-
-                stopLoadingView();
-                reloadListView();
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                //TODO: update the message counter
+                Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+
+                String channelId = dataSnapshot.getKey();
+                String channelName =      (String) raw.get("name");
+                String channelCreatorId = (String) raw.get("creator");
+                ArrayList<Message> messages = new ArrayList<>();
+
+                HashMap<String, Object> messagesRaw = (HashMap<String, Object>) raw.get("messages");
+                if (messagesRaw == null || messagesRaw.isEmpty()) {
+                    updateChannel(new Channel(channelId, channelName, channelCreatorId));
+                } else {
+                    for (Map.Entry<String, Object> messageRaw : messagesRaw.entrySet()) {
+                        Message m = Tools.mapEntryToMessage(messageRaw, true);
+                        messages.add(m);
+                    }
+                    updateChannel(new Channel(channelId, channelName, channelCreatorId, messages));
+                }
+
             }
 
             @Override
@@ -148,10 +162,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String channelId = dataSnapshot.getKey();
                 String channelName =      raw.get("name");
                 String channelCreatorId = raw.get("creator");
-                channelList.remove(new Channel(channelId, channelName, channelCreatorId));
-
-                stopLoadingView();
-                reloadListView();
+                removeChannel(new Channel(channelId, channelName, channelCreatorId));
             }
 
             @Override
@@ -166,6 +177,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 String message = "Firebase error.";
                 Tools.showInfoMessage(view, message);
                 */
+            }
+
+            public void addChannel(Channel channel) {
+                channelList.add(channel);
+                stopLoadingView();
+                reloadListView();
+            }
+
+            public void updateChannel(Channel channel) {
+                int position = channelList.indexOf(channel);
+                channelList.set(position, channel);
+                stopLoadingView();
+                reloadListView();
+            }
+
+            public void removeChannel(Channel channel) {
+                channelList.remove(channel);
+                stopLoadingView();
+                reloadListView();
             }
         };
 
