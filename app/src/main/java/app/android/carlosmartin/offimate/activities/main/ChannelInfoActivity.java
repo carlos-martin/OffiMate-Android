@@ -144,9 +144,7 @@ public class ChannelInfoActivity extends AppCompatActivity implements ListView.O
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                //TODO: onChildMoved never will happen
-            }
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

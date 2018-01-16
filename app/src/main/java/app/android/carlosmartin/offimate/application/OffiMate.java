@@ -66,12 +66,6 @@ public class OffiMate extends Application {
         } else {
             this.currentUser = null;
         }
-
-        /*
-         * TODO: Take care of this
-         *
-         * this.realm.close();
-         *
-         */
+        //TODO: Take care of this: this.realm.close();
     }
 }

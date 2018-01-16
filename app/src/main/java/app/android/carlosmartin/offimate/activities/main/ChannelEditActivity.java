@@ -60,11 +60,8 @@ public class ChannelEditActivity extends AppCompatActivity {
             public void onClick(View v) {
                 newName = nameEditText.getText().toString();
                 if (!newName.equals(currentChannel.name) && !newName.isEmpty()) {
-
-                    //TODO: Update back the new name
                     currentChannel.name = newName;
                     channelRef.child("name").setValue(newName);
-
                     Intent intent = new Intent();
                     intent.putExtra("channel", currentChannel);
                     setResult(RESULT_OK, intent);

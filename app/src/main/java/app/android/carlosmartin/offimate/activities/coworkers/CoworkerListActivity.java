@@ -101,9 +101,7 @@ public class CoworkerListActivity extends AppCompatActivity implements ListView.
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                //TODO: onChildMoved never will happen
-            }
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

@@ -55,7 +55,6 @@ public class SendBoostCard1Activity extends AppCompatActivity implements ListVie
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //TODO: fetch type and header before move forward
         this.type =   this.getType(position);
         this.header = this.getHeader(position);
 

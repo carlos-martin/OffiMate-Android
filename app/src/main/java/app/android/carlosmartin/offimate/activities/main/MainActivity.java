@@ -166,9 +166,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                //TODO: onChildMoved never will happen
-            }
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -410,7 +408,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //TODO: complete to go to selected channel activity.
         this.goToChannelActivity(this.channelList.get(position), position);
     }
 
@@ -434,8 +431,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void goToEditProfile() {
-        //TODO: complete to go to edit profile activity
-        //Toast.makeText(MainActivity.this, "TO SELECTION OFFICE ACTIVITY", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MainActivity.this, EditProfileActivity.class);
         startActivity(intent);
     }

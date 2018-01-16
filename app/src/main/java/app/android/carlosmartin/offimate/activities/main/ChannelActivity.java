@@ -122,23 +122,28 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Message message = Tools.dataSnapshotToMessage(dataSnapshot);
                 if (message == null) {
-                    final DataSnapshot messageDataSnapshot = dataSnapshot;
+                    final DataSnapshot mDataSnapshot = dataSnapshot;
                     String uid = (String)((Map<String, Object>) dataSnapshot.getValue()).get("uid");
                     coworkerRef.orderByChild("userId").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot coworkerDataSnapshot) {
-                            Map<String, Object> raw = (Map<String, Object>) coworkerDataSnapshot.getValue();
-                            Map.Entry<String, Object> entry = raw.entrySet().iterator().next();
                             //Updating coworker
-                            Coworker coworker = Tools.rawToCoworker(entry);
-                            OffiMate.coworkers.put(coworker.id, coworker);
+                            Coworker c = Tools.rawToCoworker(
+                                    ((Map<String, Object>) coworkerDataSnapshot.getValue())
+                                            .entrySet().iterator().next()
+                            );
+                            OffiMate.coworkers.put(c.id, c);
+
                             //Adding message
-                            Message message = Tools.dataSnapshotToMessage(messageDataSnapshot, true);
-                            addMessage(message);
+                            Message m = Tools.dataSnapshotToMessage(mDataSnapshot, true);
+                            addMessage(m);
                         }
 
                         @Override
-                        public void onCancelled(DatabaseError databaseError) { /*TODO: handler error*/ }
+                        public void onCancelled(DatabaseError databaseError) {
+                            Message m = Tools.dataSnapshotToMessage(mDataSnapshot, true);
+                            addMessage(m);
+                        }
                     });
                 } else {
                     addMessage(message);
@@ -155,7 +160,9 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
 
             @Override
-            public void onCancelled(DatabaseError databaseError) { /*TODO: Handle error*/ }
+            public void onCancelled(DatabaseError databaseError) {
+                Tools.showInfoMessage(inputView, "Oops! Backend error fetching messages");
+            }
 
             public void addMessage(Message message) {
                 channel.addMessage(message);

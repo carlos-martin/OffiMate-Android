@@ -120,12 +120,8 @@ public class SendBoostCard2Activity extends AppCompatActivity {
             String message = "The Boost Card cannot have an empty message.";
             Tools.showInfoMessage(this.messageEditText, message);
         } else {
-            //TODO: create and store the BoostCard at firebase
-
             this.date = new NewDate(new Date());
-
             this.createBoostCard();
-
             Toast.makeText(SendBoostCard2Activity.this,
                     "Boost Card sent properly", Toast.LENGTH_LONG).show();
             this.goToMainActivity();

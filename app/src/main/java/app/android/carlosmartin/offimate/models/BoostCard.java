@@ -47,21 +47,17 @@ public class BoostCard implements Comparable<BoostCard>, Serializable {
     @Override
     public String toString() {
         return "BoostCard:\n" +
-                "├── date:        " + this.date + "\n" +
-                "├── id:          " + this.id + "\n" +
-                "├── senderId:    " + this.senderId + "\n" +
-                "├── receiverId:  " + this.receiverId + "\n" +
-                "├── type:        " + this.type + "\n" +
-                "├── header:      " + this.header + "\n" +
-                "└── message:     " + this.message + "\n";
+                "├── date:       " + this.date       + "\n" +
+                "├── id:         " + this.id         + "\n" +
+                "├── senderId:   " + this.senderId   + "\n" +
+                "├── receiverId: " + this.receiverId + "\n" +
+                "├── type:       " + this.type       + "\n" +
+                "├── header:     " + this.header     + "\n" +
+                "└── message:    " + this.message    + "\n";
     }
 
     @Override
     public int compareTo(@NonNull BoostCard boostCard) {
-        /*
-        TODO: depends on the NewDate class
         return this.date.compareTo(boostCard.date);
-        */
-        return 0;
     }
 }

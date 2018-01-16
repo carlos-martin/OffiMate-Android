@@ -73,15 +73,12 @@ public class BoostCardsListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        //TODO: complete getView
-
         ViewHolder holder;
 
         switch (position) {
             case 0:
             case 4:
                 //Header: 0 > passion, 4 > execution
-
                 if (convertView == null || ((ViewHolder)convertView.getTag()).headerLayout == null) {
                     LayoutInflater layoutInflater = LayoutInflater.from(this.context);
                     convertView = layoutInflater.inflate(R.layout.list_item_boostcard_header, null);
@@ -108,7 +105,6 @@ public class BoostCardsListAdapter extends BaseAdapter {
                 return convertView;
             default:
                 int index;
-
                 //Body: 1..3 > passion body; 5..7 > execution body
                 if (convertView == null || ((ViewHolder)convertView.getTag()).titleTextView == null) {
                     LayoutInflater layoutInflater = LayoutInflater.from(this.context);
@@ -134,8 +130,6 @@ public class BoostCardsListAdapter extends BaseAdapter {
 
                 return convertView;
         }
-
-
     }
 
     @Override
@@ -148,7 +142,7 @@ public class BoostCardsListAdapter extends BaseAdapter {
                 return super.isEnabled(position);
         }
     }
-    //TODO: static class ViewHolder
+
     static class ViewHolder {
         private LinearLayout headerLayout;
         private ImageView iconImageView;
