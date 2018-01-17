@@ -112,7 +112,24 @@ public class SignUpPasswordActivity extends AppCompatActivity {
                         userId = OffiMate.firebaseUser.getUid();
 
                         createCoworker();
-                        moveToLoadingActivity();
+
+                        OffiMate.firebaseUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(SignUpPasswordActivity.this,
+                                            "Verification email sent to " + OffiMate.firebaseUser.getEmail(),
+                                            Toast.LENGTH_SHORT).show();
+
+                                } else {
+                                    Toast.makeText(SignUpPasswordActivity.this,
+                                            "Failed to send verification email.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                moveToLoadingActivity();
+                            }
+                        });
+
                     } else {
                         Toast.makeText(SignUpPasswordActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }

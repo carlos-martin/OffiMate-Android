@@ -361,7 +361,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             */
             case R.id.nav_log_out:
                 this.logOutAction();
-                drawer.closeDrawer(GravityCompat.START);
                 return true;
             default:
                 drawer.closeDrawer(GravityCompat.START);
@@ -389,19 +388,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void execute(Realm realm) {
                 OffiMate.realm.deleteAll();
-            }
-        });
-
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                stopLoadingView();
                 OffiMate.currentUser = null;
                 OffiMate.firebaseUser = null;
                 goToLoadingActivity();
             }
-        }, 1000);
+        });
     }
 
     //MARK: - List view function

@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editTextEmail;
     private EditText editTextPassword;
     private MenuItem barMenuButton;
+    private Button   resetButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +123,45 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        this.resetButton = findViewById(R.id.resetPasswordButton);
+        this.resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startLoadingView();
+
+                String email = editTextEmail.getText().toString();
+                String errorMessage = null;
+                if (email == null || email.isEmpty()) {
+                    errorMessage = "Email field cannot be empty";
+                } else if (!Tools.isValidEmail(email)) {
+                    errorMessage = "Email field has not a valid email";
+                }
+
+                if (errorMessage != null) {
+                    Toast.makeText(LoginActivity.this,
+                            errorMessage, Toast.LENGTH_LONG).show();
+                    stopLoadingView();
+                } else {
+                    OffiMate.mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            String m;
+                            if (task.isSuccessful()) {
+                                m  = "We have sent you an email.\n";
+                                m += "Check you email inbox and follow the instructions.";
+                                Toast.makeText(LoginActivity.this, m, Toast.LENGTH_LONG);
+                                moveToLoadingActivity();
+                            } else {
+                                m = "Error sending reset email.";
+                                Toast.makeText(LoginActivity.this, m, Toast.LENGTH_LONG);
+                                stopLoadingView();
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void loginAction() {
@@ -138,8 +179,8 @@ public class LoginActivity extends AppCompatActivity {
                 error_counter++;
                 this.userEmail = null;
 
-                String error_message = "Your email must have one of this two domains: sigma.se or " +
-                        "sigmatechnology.se";
+                String error_message = "Your email must have one of this two domains: sigma.se " +
+                        "or sigmatechnology.se";
 
                 Toast.makeText(LoginActivity.this,
                         error_message , Toast.LENGTH_LONG).show();
@@ -202,6 +243,7 @@ public class LoginActivity extends AppCompatActivity {
                                     userOffice = new Office(officeId, officeName);
 
                                     //EVERYTHING IS READY TO CONTINUE:
+                                    saveLocalData();
                                     moveToLoadingActivity();
                                 }
 
@@ -227,9 +269,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void moveToLoadingActivity () {
-
-        //FIRST: SAVE LOCAL DATA
+    private void saveLocalData() {
         OffiMate.realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -238,8 +278,9 @@ public class LoginActivity extends AppCompatActivity {
                 realm.copyToRealm(OffiMate.currentUser);
             }
         });
+    }
 
-        //SECOND: GO AHEAD TO NEXT ACTIVITY
+    private void moveToLoadingActivity () {
         Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -251,12 +292,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startLoadingView () {
         findViewById(R.id.loginLoadingPanel).setVisibility(View.VISIBLE);
-        this.barMenuButton.setVisible(false);
+        this.barMenuButton.setEnabled(false);
+        this.resetButton.setEnabled(false);
     }
 
     private void stopLoadingView() {
         findViewById(R.id.loginLoadingPanel).setVisibility(View.GONE);
-        this.barMenuButton.setVisible(true);
+        this.barMenuButton.setEnabled(true);
+        this.resetButton.setEnabled(true);
     }
 
     // Menu

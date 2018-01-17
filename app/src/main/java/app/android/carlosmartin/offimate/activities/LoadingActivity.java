@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -52,8 +53,6 @@ public class LoadingActivity extends AppCompatActivity {
         int userStatus = this.getUserStatus();
         switch (userStatus) {
             case 0:
-                this.checkingEmailStatus();
-                break;
             case 1:
                 this.tryToConnect();
                 break;
@@ -118,8 +117,22 @@ public class LoadingActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     //YES button pressed
-                    OffiMate.firebaseUser.sendEmailVerification();
-                    goToOnBoardActivity();
+                    OffiMate.firebaseUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoadingActivity.this,
+                                        "Verification email sent to " + OffiMate.firebaseUser.getEmail(),
+                                        Toast.LENGTH_SHORT).show();
+
+                            } else {
+                                Toast.makeText(LoadingActivity.this,
+                                        "Failed to send verification email.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                            goToOnBoardActivity();
+                        }
+                    });
                 }
             })
             .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
