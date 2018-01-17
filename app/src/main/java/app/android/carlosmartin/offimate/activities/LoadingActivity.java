@@ -1,8 +1,11 @@
 package app.android.carlosmartin.offimate.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -35,11 +38,8 @@ public class LoadingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
-
         this.initUI();
-
-        //TODO: Verify if the user has verified the email
-        this.validationProcess();
+        this.start();
     }
 
     private void initUI() {
@@ -47,9 +47,23 @@ public class LoadingActivity extends AppCompatActivity {
         this.updateLabel("Init data...");
     }
 
-    private void validationProcess() {
+    private void start() {
         this.updateLabel("Validating data...");
+        int userStatus = this.getUserStatus();
+        switch (userStatus) {
+            case 0:
+                this.checkingEmailStatus();
+                break;
+            case 1:
+                this.tryToConnect();
+                break;
+            default:
+                this.goToOnBoardActivity();
+                break;
+        }
+    }
 
+    private int getUserStatus() {
         /**
          │ firebaseUser │ currentUser  │ status  │
          ├──────────────┼──────────────┼─────────┤
@@ -62,36 +76,99 @@ public class LoadingActivity extends AppCompatActivity {
          │     null     │     null     │    3    │
          └──────────────┴──────────────┴─────────┘
          */
-
         int status = 0;
+
         if (OffiMate.firebaseUser == null)
             status += 1;
 
         if (OffiMate.currentUser == null)
             status += 2;
 
-        switch (status) {
-            case 0:
-                fetchData();
-                break;
-            case 1:
-                String userEmail = OffiMate.currentUser.getEmail();
-                String userPass  = OffiMate.currentUser.getPassword();
-                OffiMate.mAuth.signInWithEmailAndPassword(userEmail, userPass).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        return status;
+    }
+
+    private void tryToConnect() {
+        String userMail = OffiMate.currentUser.getEmail();
+        String userPass = OffiMate.currentUser.getPassword();
+        OffiMate.mAuth.signInWithEmailAndPassword(userMail, userPass).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    checkingEmailStatus();
+                } else {
+                    goToOnBoardActivity();
+                }
+            }
+        });
+    }
+
+    private void checkingEmailStatus() {
+        if (OffiMate.firebaseUser.isEmailVerified()) {
+            this.fetchData();
+        } else {
+            String title = "Email Not Verified";
+            String message = "Your email has not yet been verified. ";
+            message += "Do you want us to send another verification email to ";
+            message += OffiMate.firebaseUser.getEmail() + "?";
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //YES button pressed
+                    OffiMate.firebaseUser.sendEmailVerification();
+                    goToOnBoardActivity();
+                }
+            })
+            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //NO button pressed
+                    goToOnBoardActivity();
+                }
+            })
+            .show();
+        }
+    }
+
+    private void fetchData() {
+        FirebaseDatabase.getInstance().getReference("office").orderByKey().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                updateLabel("Fetching Offices...");
+                Map<String, Object> rawMap = (Map<String, Object>) dataSnapshot.getValue();
+                for (Map.Entry<String, Object> rawEntry : rawMap.entrySet()) {
+                    Office office = Tools.rawToOffice(rawEntry);
+                    OffiMate.offices.put(office.id, office);
+                }
+                FirebaseDatabase.getInstance().getReference("coworkers").orderByKey().addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            fetchData();
-                        } else {
-                            goToOnBoardActivity();
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        updateLabel("Fetching Coworkers...");
+                        Map<String, Object> rawMap = (Map<String, Object>) dataSnapshot.getValue();
+                        for (Map.Entry<String, Object> rawEntry : rawMap.entrySet()) {
+                            Coworker coworker = Tools.rawToCoworker(rawEntry);
+                            OffiMate.coworkers.put(coworker.uid, coworker);
+                            if (OffiMate.currentUser.getUid().equals(coworker.uid)) {
+                                OffiMate.coworkerId = coworker.id;
+                            }
                         }
+                        goToMainActivity();
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        //TODO: handler cancelled fetching coworkers
                     }
                 });
-                break;
-            default:
-                goToOnBoardActivity();
-                break;
-        }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //TODO: handler cancelled fetching office
+            }
+        });
     }
 
     //MARK:- Navigation Function
@@ -118,51 +195,4 @@ public class LoadingActivity extends AppCompatActivity {
         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
     }
 
-    //MARK:- Data Function
-    private void fetchData() {
-        FirebaseDatabase.getInstance().getReference("office").orderByKey().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                updateLabel("Fetching Offices...");
-
-                Map<String, Object> rawMap = (Map<String, Object>) dataSnapshot.getValue();
-                for (Map.Entry<String, Object> rawEntry : rawMap.entrySet()) {
-                    Office office = Tools.rawToOffice(rawEntry);
-                    OffiMate.offices.put(office.id, office);
-                }
-
-                FirebaseDatabase.getInstance().getReference("coworkers").orderByKey().addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        updateLabel("Fetching Coworkers...");
-
-                        Map<String, Object> rawMap = (Map<String, Object>) dataSnapshot.getValue();
-                        for (Map.Entry<String, Object> rawEntry : rawMap.entrySet()) {
-                            Coworker coworker = Tools.rawToCoworker(rawEntry);
-                            OffiMate.coworkers.put(coworker.uid, coworker);
-
-                            if (OffiMate.currentUser.getUid().equals(coworker.uid)) {
-                                OffiMate.coworkerId = coworker.id;
-                            }
-
-                        }
-
-                        goToMainActivity();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        //TODO: handler cancelled fetching coworkers
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //TODO: handler cancelled fetching office
-            }
-        });
-    }
 }
