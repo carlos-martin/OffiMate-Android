@@ -208,23 +208,25 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean someoneTyping = false;
-                Map<String, Object> dataSnapshotMap = (Map<String, Object>) dataSnapshot.getValue();
-                for (Map.Entry<String, Object> dataEntry : dataSnapshotMap.entrySet()) {
-                    if (!OffiMate.currentUser.getUid().equals(dataEntry.getKey())) {
-                        boolean isTyping = (boolean) dataEntry.getValue();
-                        someoneTyping = (isTyping ? true : someoneTyping);
+                if (dataSnapshot.getValue() != null) {
+                    Map<String, Object> dataSnapshotMap = (Map<String, Object>) dataSnapshot.getValue();
+                    for (Map.Entry<String, Object> dataEntry : dataSnapshotMap.entrySet()) {
+                        if (!OffiMate.currentUser.getUid().equals(dataEntry.getKey())) {
+                            boolean isTyping = (boolean) dataEntry.getValue();
+                            someoneTyping = (isTyping ? true : someoneTyping);
+                        }
                     }
-                }
 
-                if (isTyping == someoneTyping) {
-                    return;
-                } else {
-                    if (isTyping) {
-                        adapter.delete(typingMessage);
+                    if (isTyping == someoneTyping) {
+                        return;
                     } else {
-                        adapter.addToStart(typingMessage, true);
+                        if (isTyping) {
+                            adapter.delete(typingMessage);
+                        } else {
+                            adapter.addToStart(typingMessage, true);
+                        }
+                        isTyping = someoneTyping;
                     }
-                    isTyping = someoneTyping;
                 }
             }
 
