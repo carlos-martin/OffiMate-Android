@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Navigation Title
         setTitle("OffiMate");
         for (int i = 0; i < this.showPassword.length(); i++) {
-            this.hidePassword += "×";
+            this.hidePassword += "∙";
         }
         //FloatingButton
         this.initFloatingButton();
