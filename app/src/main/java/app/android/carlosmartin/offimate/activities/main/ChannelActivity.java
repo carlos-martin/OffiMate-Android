@@ -3,10 +3,12 @@ package app.android.carlosmartin.offimate.activities.main;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.widget.EditText;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -30,13 +32,13 @@ import app.android.carlosmartin.offimate.adapters.main.CustomIncomingMessageView
 import app.android.carlosmartin.offimate.models.Coworker;
 import app.android.carlosmartin.offimate.models.Message;
 import app.android.carlosmartin.offimate.models.NewDate;
-import app.android.carlosmartin.offimate.user.CurrentUser;
 
 public class ChannelActivity extends AppCompatActivity implements DateFormatter.Formatter {
 
     //UI
     private MenuItem     barMenuButton;
     private MessageInput inputView;
+    private EditText     messageEditText;
     private MessagesList messagesList;
     private MessagesListAdapter<Message> adapter;
 
@@ -45,6 +47,8 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
     private DatabaseReference channelRef;
     private DatabaseReference messageRef;
     private DatabaseReference coworkerRef;
+    private DatabaseReference typingRef;
+    private DatabaseReference userTypingRef;
 
     //DataSource
     private Channel channel;
@@ -87,10 +91,13 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
     }
 
     private void initFirebase() {
-        this.database = FirebaseDatabase.getInstance();
-        this.channelRef  = this.database.getReference("channels").child(this.channel.id);
-        this.messageRef  = this.channelRef.child("messages");
-        this.coworkerRef = this.database.getReference("coworkers");
+        this.database       = FirebaseDatabase.getInstance();
+        this.channelRef     = this.database.getReference("channels").child(this.channel.id);
+        this.messageRef     = this.channelRef.child("messages");
+        this.typingRef      = this.channelRef.child("typingIndicator");
+        this.userTypingRef  = this.typingRef.child(OffiMate.currentUser.getUid());
+        this.coworkerRef    = this.database.getReference("coworkers");
+
     }
 
     private void fetchBundle() {
@@ -107,7 +114,28 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
             @Override
             public boolean onSubmit(CharSequence input) {
                 sendMessage(input.toString());
+                userTypingRef.setValue(false);
                 return true;
+            }
+        });
+
+        this.messageEditText = this.inputView.getInputEditText();
+        this.messageEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                return;
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                userTypingRef.setValue(true);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s == null || s.toString().isEmpty()) {
+                    userTypingRef.setValue(false);
+                }
             }
         });
 
@@ -176,16 +204,19 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
     }
 
     private void observerTyping() {
-        DatabaseReference typingRef = this.channelRef.child("typingIndicator");
-        typingRef.addValueEventListener(new ValueEventListener() {
+        this.typingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean someoneTyping = false;
+                Map<String, Object> dataSnapshotMap = (Map<String, Object>) dataSnapshot.getValue();
+                for (Map.Entry<String, Object> dataEntry : dataSnapshotMap.entrySet()) {
+                    if (!OffiMate.currentUser.getUid().equals(dataEntry.getKey())) {
+                        boolean isTyping = (boolean) dataEntry.getValue();
+                        someoneTyping = (isTyping ? true : someoneTyping);
+                    }
+                }
 
-                Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
-                Map.Entry<String, Object> entry = raw.entrySet().iterator().next();
-                boolean typing = (boolean) entry.getValue();
-
-                if (isTyping == typing) {
+                if (isTyping == someoneTyping) {
                     return;
                 } else {
                     if (isTyping) {
@@ -193,7 +224,7 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
                     } else {
                         adapter.addToStart(typingMessage, true);
                     }
-                    isTyping = typing;
+                    isTyping = someoneTyping;
                 }
             }
 
