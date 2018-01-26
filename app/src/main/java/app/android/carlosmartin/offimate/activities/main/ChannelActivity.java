@@ -49,6 +49,8 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
     //DataSource
     private Channel channel;
     private Channel deprecatedChannel;
+    private Message typingMessage = new Message("", "", "", "∙∙∙", (new NewDate(new Date())).id);
+    private boolean isTyping = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,7 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
         this.initFirebase();
         this.initUI();
         this.observerMessage();
+        this.observerTyping();
     }
 
     @Override
@@ -170,6 +173,35 @@ public class ChannelActivity extends AppCompatActivity implements DateFormatter.
             }
         };
         this.messageRef.addChildEventListener(childEventListener);
+    }
+
+    private void observerTyping() {
+        DatabaseReference typingRef = this.channelRef.child("typingIndicator");
+        typingRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Map<String, Object> raw = (Map<String, Object>) dataSnapshot.getValue();
+                Map.Entry<String, Object> entry = raw.entrySet().iterator().next();
+                boolean typing = (boolean) entry.getValue();
+
+                if (isTyping == typing) {
+                    return;
+                } else {
+                    if (isTyping) {
+                        adapter.delete(typingMessage);
+                    } else {
+                        adapter.addToStart(typingMessage, true);
+                    }
+                    isTyping = typing;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                return;
+            }
+        });
     }
 
     @Override
