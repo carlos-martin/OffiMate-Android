@@ -17,6 +17,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="488243394fd6cab595c843dc260f78fc4ab79c0f"
+            />
         <activity android:name=".activities.onboard.SignUpNameActivity" />
         <activity android:name=".activities.onboard.SignUpEmailActivity" />
         <activity android:name=".activities.onboard.SignUpOfficesActivity" />
@@ -40,5 +44,5 @@
         <activity android:name=".activities.main.ChannelInfoActivity" />
         <activity android:name=".activities.main.ChannelEditActivity"></activity>
     </application>
-
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

@@ -3,9 +3,11 @@ package app.android.carlosmartin.offimate.application;
 import android.app.Application;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import io.fabric.sdk.android.Fabric;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +44,7 @@ public class OffiMate extends Application {
         this.realmConfigurationSepUp();
         this.realmFetchingData();
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
     }
 
     private void firebaseAuth() {
