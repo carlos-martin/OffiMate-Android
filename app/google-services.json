@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "1073765348596",
-    "firebase_url": "https://singlesignup-c74ac.firebaseio.com",
-    "project_id": "singlesignup-c74ac",
-    "storage_bucket": "singlesignup-c74ac.appspot.com"
+    "project_number": "849450920429",
+    "firebase_url": "https://offimate-release-candidate.firebaseio.com",
+    "project_id": "offimate-release-candidate",
+    "storage_bucket": "offimate-release-candidate.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1073765348596:android:02d37147661d2d4e",
+        "mobilesdk_app_id": "1:849450920429:android:02d37147661d2d4e",
         "android_client_info": {
           "package_name": "app.android.carlosmartin.offimate"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1073765348596-udto6o6dpvaja6db0j6ceapjk46vge5k.apps.googleusercontent.com",
+          "client_id": "849450920429-hl7qv65h79r9o49cjjifqgmm2sfr4f8u.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBIn0Z-kOJqdkM-dNBeLbFKdhjT-TfaVqQ"
+          "current_key": "AIzaSyD8L3F3DJDMLZvdBDlDfsWvRC1T21XANok"
         }
       ],
       "services": {
